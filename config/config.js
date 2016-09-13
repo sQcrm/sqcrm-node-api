@@ -59,5 +59,12 @@ module.exports = {
 		defaults: {
 			migrate: 'safe'
 		}
+	},
+	
+	oauth: {
+		accessTokenLifetime: 3600, // 60 minutes
+		refreshTokenLifetime: 7776000, // 90 days
+		grants: ['client_credentials', 'refresh_token', 'password'],
+		debug: false
 	}
 };

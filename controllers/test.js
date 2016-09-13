@@ -21,6 +21,13 @@ module.exports = function(app, config) {
 		*      notes: Return some test data
 		*      responseClass: test
 		*      nickname: test
+		*      parameters:
+		*        - name: Authorization
+		*          description: access token
+		*          paramType: header
+		*          required: true
+		*          dataType: string
+		*          defaultValue: Bearer ACCESS_TOKEN_HERE
 		*/
 		getAll: function(req, res, next) {
 			var apiBase = req.protocol + '://' + req.get('host') + apiNamespace,
