@@ -28,6 +28,12 @@ module.exports = function Router(app) {
 		}));
 	}
 	
+	router.route('/oauth/token')
+	.post(app.oauth.grant());
+	
+	router.get('*', app.oauth.authorise());
+	router.post('*', app.oauth.authorise());
+	
 	router.route('/test')
 	.get(appControllers.test.getAll);
 	
