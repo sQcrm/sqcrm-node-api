@@ -5,7 +5,8 @@ var _ = require('lodash'),
 	fs = require('fs'),
 	methodOverride = require('method-override'),
 	path = require('path'),
-	Waterline = require('waterline');
+	Waterline = require('waterline'),
+	oauthserver = require('oauth2-server');
 
 // Instantiations and configs
 var app = express(),
@@ -25,6 +26,15 @@ fs.readdirSync(modelsDir)
 		orm.loadCollection(model);
 	});
 
+// Start OAuth server
+app.oauth = oauthserver({
+	accessTokenLifetime: config.oauth.accessTokenLifetime,
+	refreshTokenLifetime: config.oauth.refreshTokenLifetime,
+	grants: config.oauth.grants,
+	debug: config.oauth.debug,
+	model: require('./controllers/oauth.js')(app, config)
+});
+	
 // Setup Express Application
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '5mb' }));
@@ -34,7 +44,18 @@ app.use(methodOverride());
 var routes = new Router(app);
 app.use(config.apiNamespace, routes);
 
-// START WATERLINE
+// error handlers 
+app.use(function(err, req, res, next) {
+	// handling the oauth server errors
+	if (err.name && err.name === 'OAuth2Error') {
+		var responseBody = {
+			code: err.code,
+			error: err.error,
+			error_description: err.error_description,
+		};
+		res.json(responseBody);	
+	}
+});
 
 // Start Waterline passing adapters in
 orm.initialize(config.waterline, function(err, models) {
