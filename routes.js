@@ -15,7 +15,7 @@ module.exports = function Router(app) {
 		appControllerPaths.push(controllerPath + file);
 	});
 
-	// Swagger documentation
+	// Swagger setup
 	if (config.env !== 'production') {
 		app.use(require('swagger-express').init(app, {
 			apiVersion: config.version,
