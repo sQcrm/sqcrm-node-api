@@ -20,23 +20,19 @@ module.exports = {
 	env: env,
 	domain: domain,
 	protocol: protocol,
-	apiNamespace: apiNamespace,
-	apiLoopbackURL: process.env.API_LOOPBACK_URL || 'http://localhost',
+	apiNamespace: apiNamespace,	
 	
-	//////////////////////////////////////////////////////////////////
-	// WATERLINE CONFIG
-	//////////////////////////////////////////////////////////////////
+	// waterline config for the adapters with no migration, need to make sure model related tables are already there.
 	waterline: {
 
-		// Setup Adapters
-		// Creates named adapters that have have been required
+		// Setup named Adapters
 		adapters: {
 			'default': mysqlAdapter,
 			mysql: mysqlAdapter
 		},
 
-		// Build Connections Config
-		// Setup connections using the named adapter configs
+		// Connection config for orm with named adapter, read and write connections useful for replication
+		// if no replication is done then read and write will use the same db and credentials
 		connections: {
 			sqcrmMysql: {
 				adapter: 'mysql',
@@ -62,7 +58,7 @@ module.exports = {
 	},
 	
 	oauth: {
-		accessTokenLifetime: 3600, // 60 minutes
+		accessTokenLifetime: 7200, // 2 hours
 		refreshTokenLifetime: 7776000, // 90 days
 		grants: ['client_credentials', 'refresh_token', 'password'],
 		debug: false

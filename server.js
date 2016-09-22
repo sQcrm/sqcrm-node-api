@@ -5,7 +5,7 @@ var _ = require('lodash'),
 	fs = require('fs'),
 	methodOverride = require('method-override'),
 	path = require('path'),
-	Waterline = require('waterline'),
+	waterline = require('waterline'),
 	oauthserver = require('oauth2-server');
 
 // Instantiations and configs
@@ -13,18 +13,18 @@ var app = express(),
 	config = require('./config/config'),
 	isProd = (config.env === 'production'),
 	Router = require('./routes'),
-	orm = new Waterline();
+	orm = new waterline();
 
 // Load all models into Waterline
 var modelsDir = __dirname + '/models';
-fs.readdirSync(modelsDir)
-	.filter(function(file) {
-		return (file.indexOf(".") !== 0);
-	})
-	.forEach(function(file) {
-		var model = require(path.join(modelsDir, file));
+var modelFiles = fs.readdirSync(modelsDir);
+var model = '';
+_.filter(modelFiles, function(file) {
+	if (file.indexOf(".") !== 0) {
+		model = require(path.join(modelsDir, file));
 		orm.loadCollection(model);
-	});
+	}
+});
 
 // Start OAuth server
 app.oauth = oauthserver({
@@ -57,7 +57,7 @@ app.use(function(err, req, res, next) {
 	}
 });
 
-// Start Waterline passing adapters in
+// Initialize Waterline with the orm config
 orm.initialize(config.waterline, function(err, models) {
 	if (err) {
 		console.log('Error initializing ORM. '+err);

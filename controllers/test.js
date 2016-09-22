@@ -30,17 +30,15 @@ module.exports = function(app, config) {
 		*          defaultValue: Bearer ACCESS_TOKEN_HERE
 		*/
 		getAll: function(req, res, next) {
-			var apiBase = req.protocol + '://' + req.get('host') + apiNamespace,
-				apiEndpoint = apiBase + '/' + resourceType + '/';
-				var results = {
-					status:200,
-					title:'Sucess',
-					detail:'API call is successful'
-				}
-				//res.body = results;
-				//console.log(res.body);
-				res.json(results);
-				return next();
+			var results = {
+				status:200,
+				title:'Sucess',
+				detail:'API call is successful'
+			}
+			//res.body = results;
+			//console.log(res.body);
+			res.json(results);
+			return next();
 		}	
 	};
 };
