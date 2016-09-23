@@ -6,6 +6,8 @@ var _ = require('lodash'),
 	methodOverride = require('method-override'),
 	path = require('path'),
 	waterline = require('waterline'),
+	JSONAPISerializer = require('jsonapi-serializer').Serializer,
+	inflection = require('inflection'),
 	oauthserver = require('oauth2-server');
 
 // Instantiations and configs
@@ -37,12 +39,39 @@ app.oauth = oauthserver({
 	
 // Setup Express Application
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json({ limit: '5mb' }));
+app.use(bodyParser.json());
 app.use(methodOverride());
 
 // Setup routes
 var routes = new Router(app);
 app.use(config.apiNamespace, routes);
+
+// Setup JSONAPI response with the supplied options (global scope) in controllers  via res.locals 
+app.use( function(req, res, next) {
+	var JSONAPIOptions = res.locals.JSONAPIOptions,
+		status = res.locals.status || 200,
+		responseBody = res.body;
+	
+	if (JSONAPIOptions) {
+		if (!JSONAPIOptions.typeForAttribute) {
+			// making sure to singularize if typeForAttribute is not specified in option explicitely
+			JSONAPIOptions.typeForAttribute = function(attribute) {
+				return inflection.singularize(attribute);
+			};
+		}
+		// always camelize the attributes
+		JSONAPIOptions.keyForAttribute = function(attribute) {
+			return inflection.camelize(attribute, true);
+		};
+		
+		// do the serialize 
+		var data = new JSONAPISerializer(JSONAPIOptions.resourceType, JSONAPIOptions).serialize(responseBody);
+		// response data along with status 
+		res.status(status).json(data);
+	} else {
+		res.status(status).json({data:responseBody});
+	}
+});
 
 // error handlers 
 app.use(function(err, req, res, next) {
