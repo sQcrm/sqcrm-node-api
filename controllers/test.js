@@ -30,14 +30,32 @@ module.exports = function(app, config) {
 		*          defaultValue: Bearer ACCESS_TOKEN_HERE
 		*/
 		getAll: function(req, res, next) {
-			var results = {
-				status:200,
-				title:'Sucess',
-				detail:'API call is successful'
-			}
-			//res.body = results;
-			//console.log(res.body);
-			res.json(results);
+			var apiBase = req.protocol + '://' + req.get('host') + apiNamespace,
+				apiEndpoint = apiBase + '/' + resourceType + '/';
+			
+			var results = [{
+        id: '1',
+					firstName: 'Sandro',
+					lastName: 'Munda',
+				}, 
+				{
+					id: '2',
+					firstName: 'Lawrence',
+					lastName: 'Bennett'
+				}
+			];
+			
+			res.locals.JSONAPIOptions = {
+				resourceType: resourceType,
+				attributes:['firstName', 'lastName'],
+				dataLinks: {
+					self: function (results,user) {
+						return apiEndpoint + user.id;
+					}
+				}
+			};
+			
+			res.body = results;
 			return next();
 		}	
 	};
