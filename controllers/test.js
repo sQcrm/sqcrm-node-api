@@ -34,7 +34,7 @@ module.exports = function(app, config) {
 				apiEndpoint = apiBase + '/' + resourceType + '/';
 			
 			var results = [{
-        id: '1',
+					id: '1',
 					firstName: 'Sandro',
 					lastName: 'Munda',
 				}, 
