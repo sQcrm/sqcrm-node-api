@@ -24,18 +24,20 @@
     "url": "https://github.com/sQcrm/sqcrm-node-api/issues"
   },
   "dependencies": {
-    "express": "~4.14.0",
-    "waterline": "~0.12.2",
-    "sails-mysql": "~0.11.5",
     "async": "~2.0.1",
-    "swagger-express": "~1.0.5",
     "body-parser": "~1.15.2",
-    "method-override": "~2.3.6",
-    "path": "~0.12.7",
-    "lodash": "~4.15.0",
+    "crypto": "0.0.3",
     "dotenv": "~2.0.0",
-    "oauth2-server": "~2.4.1",
+    "express": "~4.14.0",
+    "inflection": "^1.10.0",
+    "jsonapi-serializer": "^3.4.0",
+    "lodash": "~4.15.0",
+    "method-override": "~2.3.6",
     "moment": "~2.15.0",
-    "crypto": "0.0.3"
+    "oauth2-server": "~2.4.1",
+    "path": "~0.12.7",
+    "sails-mysql": "~0.11.5",
+    "swagger-express": "~1.0.5",
+    "waterline": "~0.12.2"
   }
 }
