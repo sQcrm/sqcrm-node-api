@@ -13,7 +13,6 @@ var _ = require('lodash'),
 // Instantiations and configs
 var app = express(),
 	config = require('./config/config'),
-	isProd = (config.env === 'production'),
 	Router = require('./routes'),
 	orm = new waterline();
 

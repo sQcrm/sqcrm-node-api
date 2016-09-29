@@ -1,6 +1,3 @@
-var _ = require('lodash'),
-	async = require('async');
-
 /**
  * @swagger
  * resourcePath: /test
