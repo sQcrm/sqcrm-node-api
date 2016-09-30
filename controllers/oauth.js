@@ -1,6 +1,4 @@
-var _ = require('lodash'),
-	async = require('async'),
-	moment = require('moment'),
+var async = require('async'),
 	common = require('../utils/common');
 
 /**
@@ -73,7 +71,7 @@ module.exports = function(app, config) {
 				var returnObj = {
 					clientId: client.clientId,
 					clientSecret: client.clientSecret
-				}
+				};
 				
 				return callback(null, returnObj);
 			});
@@ -125,11 +123,11 @@ module.exports = function(app, config) {
 			.findOne(whereClause)
 			.populate('user')
 			.exec(function(err, client_user) {
-				if (err) return cacheCallback(err);
+				if (err) return callback(err);
 
 				client_user = client_user || false;
 
-				return cacheCallback(null, client_user.user);
+				return callback(null, client_user.user);
 			});
 		},
 		

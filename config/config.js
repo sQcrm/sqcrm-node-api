@@ -1,11 +1,14 @@
+// load the dotenv for reading the .env
+require('dotenv').config();
+
 // Require any waterline compatible adapters here
 var mysqlAdapter = require('sails-mysql'),
-	envData = require('dotenv').config(),
 	port = process.env.PORT || 9601,
 	env = process.env.NODE_ENV || 'local',
 	apiNamespace = '/api/v1',
 	domain = process.env.API_DOMAIN,
 	protocol = 'https://';
+
 
 // If local, append port to the domain and serve over http.
 // Mostly to support Swagger, though config.protocol is used elsewhere.
