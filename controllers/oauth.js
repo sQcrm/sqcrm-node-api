@@ -1,7 +1,8 @@
 var _ = require('lodash'),
 	async = require('async'),
 	moment = require('moment'),
-	common = require('../utils/common');
+	common = require('../utils/common'),
+	crmPrivileges = require('../utils/crm_privileges');
 
 /**
  * @swagger
@@ -11,6 +12,38 @@ var _ = require('lodash'),
 module.exports = function(app, config) {
 	
 	return {
+		/**
+		* @swagger
+		* path: /api/v1/oauth/token
+		* operations:
+		*   -  httpMethod: POST
+		*      nickname: oauth/token
+		*      parameters:
+		*        - name: grant_type
+		*          paramType: form
+		*          required: true
+		*          dataType: string
+		*          enum: ['client_credentials', 'password', 'refresh_token']
+		*        - name: Authorization
+		*          description: YOUR_CLIENT_ID:YOUR_CLIENT_SECRET, base64 encoded
+		*          paramType: header
+		*          required: true
+		*          dataType: string
+		*          defaultValue: Basic ACCESS_TOKEN_HERE
+		*        - name: username
+		*          description: required if `grant_type=password`
+		*          paramType: form
+		*          dataType: string
+		*        - name: password
+		*          description: required if `grant_type=password`
+		*          paramType: form
+		*          dataType: string
+		*        - name: refresh_token
+		*          description: required if `grant_type=refresh_token`
+		*          paramType: form
+		*          dataType: string
+		*/
+		// Get access token
 		getAccessToken: function(bearerToken, callback) {
 			var whereClause = {accessToken: bearerToken};
 			async.auto({
@@ -47,7 +80,8 @@ module.exports = function(app, config) {
 					accessToken: results.token.accessToken,
 					clientId: results.token.client.clientId,
 					scope: results.token.client.scope,
-					expires: results.token.expiresAt
+					expires: results.token.expiresAt,
+					privileges: JSON.parse(results.token.privileges)
 				};
 
 				// If not user scope, then set user ID instead of obj
@@ -62,6 +96,7 @@ module.exports = function(app, config) {
 			});
 		},
 		
+		// Get the client 
 		getClient: function(clientId, clientSecret, callback) {
 			var whereClause = {clientId : clientId};
 			app.models.oauth_clients
@@ -79,6 +114,7 @@ module.exports = function(app, config) {
 			});
 		},
 		
+		// Check if grand type is allowed
 		grantTypeAllowed: function(clientId, grantType, callback) {
 			var whereClause = {clientId : clientId};
 			app.models.oauth_clients
@@ -93,6 +129,7 @@ module.exports = function(app, config) {
 			});
 		},
 		
+		// Get the refresh token
 		getRefreshToken: function(bearerToken, callback) {
 			var whereClause = {refresh_token: bearerToken};
 			app.models.oauth_refresh_token
@@ -106,6 +143,7 @@ module.exports = function(app, config) {
 			});
 		},
 		
+		// Get the user
 		getUser: function(username, password, callback) {
 			app.models.user.findOne({
 				password: common.md5(password),
@@ -114,11 +152,16 @@ module.exports = function(app, config) {
 				if (err) return callback(err);
 				
 				if (!user) callback('User not found !!');
-				
-				return callback(null, user);
+					
+				crmPrivileges.loadCRMPrivileges(app, user, function(err, privileges) {
+					if (err) callback(null, user);
+					user.privileges = privileges;
+					return callback(null, user);
+				});
 			});
 		},
 		
+		// Get the user from client
 		getUserFromClient: function(clientId, clientSecret, callback) {
 			var whereClause = {client: clientId};
 			app.models.oauth_client_user
@@ -135,61 +178,36 @@ module.exports = function(app, config) {
 		
 		// Save this access token, if it doesn't already exist
 		saveAccessToken: function (accessToken, clientId, expires, user, callback) {
-			app.models.oauth_access_token_write.create({
+			var saveObj = {
 				accessToken: accessToken,
 				client: clientId,
 				user: user.id,
 				expiresAt: expires
-			}, function(err, newAccessToken) {
+			};
+			
+			if (user.privileges) saveObj.privileges = JSON.stringify(user.privileges);
+			
+			app.models.oauth_access_token_write.create(saveObj, function(err, newAccessToken) {
 				if (err) return callback(err);
 				return callback(null, newAccessToken);
 			});
 		},
-
+		
+		// Save the refresh token
 		saveRefreshToken: function(refreshToken, clientId, expires, user, callback) {
-			app.models.oauth_refresh_token_write.create({
+			var saveObj = {
 				refreshToken: refreshToken,
 				client: clientId,
 				user: user.id,
 				expiresAt: expires
-			}, function(err, newRefreshToken) {
+			};
+			
+			if (user.privileges) saveObj.privileges = JSON.stringify(user.privileges);
+			
+			app.models.oauth_refresh_token_write.create(saveObj, function(err, newRefreshToken) {
 				if (err) return callback(err);
 				return callback(null, newRefreshToken);
 			});
 		}
 	};
 };
-
-
-
-/**
-* @swagger
-* path: /api/v1/oauth/token
-* operations:
-*   -  httpMethod: POST
-*      nickname: oauth/token
-*      parameters:
-*        - name: grant_type
-*          paramType: form
-*          required: true
-*          dataType: string
-*          enum: ['client_credentials', 'password', 'refresh_token']
-*        - name: Authorization
-*          description: YOUR_CLIENT_ID:YOUR_CLIENT_SECRET, base64 encoded
-*          paramType: header
-*          required: true
-*          dataType: string
-*          defaultValue: Basic ACCESS_TOKEN_HERE
-*        - name: username
-*          description: required if `grant_type=password`
-*          paramType: form
-*          dataType: string
-*        - name: password
-*          description: required if `grant_type=password`
-*          paramType: form
-*          dataType: string
-*        - name: refresh_token
-*          description: required if `grant_type=refresh_token`
-*          paramType: form
-*          dataType: string
-*/
