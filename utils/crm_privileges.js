@@ -1,6 +1,5 @@
 var _ = require('lodash'),
-	async = require('async'),
-	config = require('../config/config');
+	async = require('async');
 	
 var moduleMapping = {
 	Test:1
@@ -41,7 +40,7 @@ exports.loadCRMPrivileges = function(app, user, callback) {
 				if (err) return autoCallback();
 				if (!userRoleData) return autoCallback();
 				return autoCallback(null, userRoleData);
-			})
+			});
 		},
 		
 		// get the module datashare permissions
@@ -71,7 +70,7 @@ exports.loadCRMPrivileges = function(app, user, callback) {
 				if (err) return autoCallback();
 				if (!subUsers) return autoCallback();
 				return autoCallback(null,_.map(subUsers,'iduser'));
-			})
+			});
 		}],
 		
 		// get the module standard permissions for the associated profiles view ,add/edit, delete
@@ -142,17 +141,16 @@ exports.loadCRMPrivileges = function(app, user, callback) {
 				_.find(results.getUserModuleStandardPermissions, function(standardPermissionsValue) {
 					if (standardPermissionsValue.idmodule === moduleId) {
 						var idStandardPermission = standardPermissionsValue.idstandard_permission;
-						var permissionFlag = standardPermissionsValue.permission_flag;
 						
-						if (standardPermissionsValue.idstandard_permission === 1) {
+						if (idStandardPermission === 1) {
 							perArr["1"] = standardPermissionsValue.permission_flag;
 						}
 						
-						if (standardPermissionsValue.idstandard_permission === 2) {
+						if (idStandardPermission === 2) {
 							perArr["2"] = standardPermissionsValue.permission_flag;
 						}
 						
-						if (standardPermissionsValue.idstandard_permission === 1) {
+						if (idStandardPermission === 1) {
 							perArr["3"] = standardPermissionsValue.permission_flag;
 						}
 						
