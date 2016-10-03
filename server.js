@@ -83,6 +83,11 @@ app.use(function(err, req, res, next) {
 		};
 		res.json(responseBody);	
 	}
+	
+	// TODO better error handlers
+	if (err) {
+		res.json(err);
+	}
 });
 
 // Initialize Waterline with the orm config

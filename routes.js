@@ -1,6 +1,7 @@
 var router = require('express').Router(),
 	fs = require('fs'),
-	config = require(__dirname + '/config/config');
+	config = require(__dirname + '/config/config'),
+	crmPrivileges = require(__dirname+'/utils/crm_privileges');
 
 module.exports = function Router(app) {
 
@@ -28,6 +29,23 @@ module.exports = function Router(app) {
 		}));
 	}
 	
+	/**
+	 * middleware to check if the module access is permitted for the request
+	*/
+	function moduleAccess(moduleName) {
+		return moduleAccess[moduleName] || (moduleAccess[moduleName]= function(req, res, next) {
+			crmPrivileges.isModuleAccessAllowed(req, moduleName, function(err) {
+				if (err) {
+					return next({
+						status: 403,
+						title: err
+					});
+				}
+				return next();
+			});
+		});
+	}
+	
 	router.route('/oauth/token')
 	.post(app.oauth.grant());
 	
@@ -35,7 +53,7 @@ module.exports = function Router(app) {
 	router.post('*', app.oauth.authorise());
 	
 	router.route('/test')
-	.get(appControllers.test.getAll);
+	.get(moduleAccess('Test'),appControllers.test.getAll);
 	
 	return router;
 };

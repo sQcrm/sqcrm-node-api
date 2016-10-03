@@ -37,6 +37,11 @@ var oauth_access_token_write = Waterline.Collection.extend({
 			type: 'datetime',
 			required: true,
 			columnName: 'expires'
+		},
+		
+		privileges: {
+			type: 'string',
+			columnName: 'privileges'
 		}
 	}
 });

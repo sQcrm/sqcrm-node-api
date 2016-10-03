@@ -74,6 +74,21 @@ var user = Waterline.Collection.extend({
 		isActive: {
 			type: 'integer',
 			columnName: 'is_active'
+		},
+		
+		roleId: {
+			type: 'string',
+			columnName: 'idrole'
+		},
+		
+		privileges: function() {
+			return this.privileges;
+		},
+		
+		toJSON: function() {
+			var obj = this.toObject();
+			obj.privileges = this.privileges();
+			return obj;
 		}
 	}
 });
