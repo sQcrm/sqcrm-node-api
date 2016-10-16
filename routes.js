@@ -53,7 +53,7 @@ module.exports = function Router(app) {
 	router.post('*', app.oauth.authorise());
 	
 	router.route('/test')
-	.get(moduleAccess('Test'),appControllers.test.getAll);
+	.get(moduleAccess('Contacts'),appControllers.test.getAll);
 	
 	return router;
 };

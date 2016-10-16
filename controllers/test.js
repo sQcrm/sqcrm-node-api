@@ -1,3 +1,4 @@
+var crmPrivileges = require('../utils/crm_privileges');
 /**
  * @swagger
  * resourcePath: /test
@@ -29,6 +30,7 @@ module.exports = function(app, config) {
 		getAll: function(req, res, next) {
 			var apiBase = req.protocol + '://' + req.get('host') + apiNamespace,
 				apiEndpoint = apiBase + '/' + resourceType + '/';
+
 			var results = [{
 					id: '1',
 					firstName: 'Sandro',
