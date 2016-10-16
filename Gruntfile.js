@@ -37,10 +37,17 @@ module.exports = function(grunt) {
 		// set the watch list and use jshint for the change
 		watch: {
 			scripts: {
-				files: ['**/*.js'],
+				files: [
+					'server.js',
+					'routes.js',
+					'config/**/*.js',
+					'controllers/**/*.js',
+					'models/**/*.js',
+					'utils/**/*.js'
+				],
 				tasks: ['jshint'],
 				options: {
-					spawn: false,
+					spawn: false
 				},
 			},
 		},
@@ -62,7 +69,7 @@ module.exports = function(grunt) {
 			dev: {
 				path: 'http://localhost:9601/api/v1/docs/',
 				options: {
-					delay: 1000
+					delay: 400
 				}
 			}
 		}

@@ -24,7 +24,7 @@ var module_datashare_rel = Waterline.Collection.extend({
 		permissionFlag: {
 			type: 'integer',
 			columnName: 'permission_flag'
-		},
+		}
 	}
 });
 

@@ -1,9 +1,6 @@
 var _ = require('lodash'),
-	async = require('async');
-	
-var moduleMapping = {
-	Test:1
-};
+	async = require('async'),
+	modulesConfig = require('../config/modules_config');
 
 /**
  * load the crm privileges for user scope 
@@ -46,7 +43,7 @@ exports.loadCRMPrivileges = function(app, user, callback) {
 		// get the module datashare permissions
 		getModuleDatasharePermissions: function(autoCallback) {
 			app.models.module_datashare_rel
-			.findAll()
+			.find()
 			.exec(function(err, datasharePermissions) {
 				if (err) return autoCallback();
 				if (!datasharePermissions) return autoCallback();
@@ -73,6 +70,28 @@ exports.loadCRMPrivileges = function(app, user, callback) {
 			});
 		}],
 		
+		// get the associated groups of the user 
+		getGroups: ['getSubordinateUsers', function(result, autoCallback) {
+			if (user.isAdmin === 1) return autoCallback();
+			var subordibateUsers = result.getSubordinateUsers,
+				userId = user.id,
+				groupUsers;
+			
+			if (subordibateUsers) {
+				groupUsers = _.union(subordibateUsers,[userId]);
+			} else {
+				groupUsers = [userId];
+			}
+			
+			app.models.group_user_rel
+			.find({userId:groupUsers})
+			.exec(function(err, groups) {
+				if (err) return autoCallback();
+				if (!groups) return autoCallback();
+				return autoCallback(null, _.uniq(_.map(groups,'groupId')));
+			});
+			
+		}],
 		// get the module standard permissions for the associated profiles view ,add/edit, delete
 		getUserModuleStandardPermissions: function(autoCallback) {
 			if (user.isAdmin === 1) return autoCallback();
@@ -110,23 +129,24 @@ exports.loadCRMPrivileges = function(app, user, callback) {
 	function(err, results) {
 		if (err) return callback(err);
 		
+		if (results.getActiveModules) {
+			crmPrivileges.activeModules = results.getActiveModules;
+		}
+			
 		if (user.isAdmin === 1) {
 			return callback(null, crmPrivileges);
 		} else {
-			if (results.getActiveModules) {
-				crmPrivileges.activeModules = results.getActiveModules;
-			}
-			
 			if (results.getSubordinateUsers) {
 				crmPrivileges.subordibateUsers = results.getSubordinateUsers;
 			}
 			
-			if (results.getModuleDatasharePermissions) {
-				crmPrivileges.datasharePermissions = results.getModuleDatasharePermissions;
+			if (results.getGroups) {
+				crmPrivileges.groups = results.getGroups;
 			}
 			
 			var modulePermissions = {};
 			var moduleStandardPermissions = {};
+			var moduleDatasharePer = {};
 			
 			// loop through the active modules
 			async.each(results.getActiveModules, function(moduleId, err) {
@@ -150,14 +170,21 @@ exports.loadCRMPrivileges = function(app, user, callback) {
 							perArr["2"] = standardPermissionsValue.permission_flag;
 						}
 						
-						if (idStandardPermission === 1) {
+						if (idStandardPermission === 3) {
 							perArr["3"] = standardPermissionsValue.permission_flag;
 						}
 						
 						moduleStandardPermissions[moduleId] = perArr;
 					}
 				});
+				// create the object with the datashare permissions for each module which is the top level
+				_.find(results.getModuleDatasharePermissions, function(datasharePermissionsValue) {
+					if (datasharePermissionsValue.idmodule === moduleId) {
+						moduleDatasharePer[moduleId] = datasharePermissionsValue.permissionFlag;
+					}
+				});
 			});
+			crmPrivileges.datasharePermissions = moduleDatasharePer;
 			crmPrivileges.modulePemissions = modulePermissions;
 			crmPrivileges.moduleStandardPermissions = moduleStandardPermissions;
 		}
@@ -176,8 +203,8 @@ exports.isModuleAccessAllowed = function(req, moduleName, callback) {
 		privileges = req.oauth.bearerToken.privileges,
 		moduleId;
 	
-	if (moduleName in moduleMapping) {
-		moduleId = moduleMapping[moduleName];
+	if (moduleName in modulesConfig.moduleMapping) {
+		moduleId = modulesConfig.moduleMapping[moduleName];
 	}
 	if (!moduleId) return callback('Unauthorized access ! Module not found !');
 	if (_.indexOf(privileges.activeModules,moduleId) === -1) return callback('Unauthorized access ! Module not found !');
@@ -190,6 +217,70 @@ exports.isModuleAccessAllowed = function(req, moduleName, callback) {
 		}
 	} else {
 		// for now if the scope is not user allow module access
+		return callback();
+	}
+};
+
+/**
+ * generate the where condition specific to a module data considerting the hierarchy
+ * @param object req - request object of express
+ * @param integer moduleId - module id for the module 
+ * @param string tableName - the entity table name for the module
+ * @param string groupRelationTable - the group relation table for the entity
+ * @param boolean includeSubordinateUser - whether or not to include the subordibate users data
+ * @param function callback - callback function once done
+*/
+exports.userWhereCondition = function(req, moduleId, tableName, groupRelationTable, includeSubordinateUser, callback) {
+	var scope = req.oauth.bearerToken.scope,
+		privileges = req.oauth.bearerToken.privileges,
+		whereClause,
+		userId;
+	if (scope === 'user') {
+		whereClause = "";
+		userId = req.oauth.bearerToken.user.id;
+		if (privileges.isAdmin !== 1) {
+			if (_.has(privileges.datasharePermissions,moduleId)) {
+				var publicAccessFlags = [1,2,3];
+				
+				if (privileges.datasharePermissions[moduleId] === 5) {
+					whereClause = " AND `"+tableName+"`.`iduser` = "+userId;
+				} else if (_.includes(publicAccessFlags, privileges.datasharePermissions[moduleId])) {
+					whereClause = " AND 1=1";
+				} else {
+					var includeGroups = false,
+						groupIds,
+						subUserIds;
+					
+					if (groupRelationTable && _.has(privileges,'groups') && privileges.groups && privileges.groups.length > 0) {
+						groupIds = privileges.groups.join();
+						includeGroups = true;
+					}
+					
+					if (includeSubordinateUser && _.has(privileges,'subordibateUsers') && privileges.subordibateUsers) {
+						subUserIds = privileges.subordibateUsers.join();
+						if (includeGroups) {
+							whereClause = " AND";
+							whereClause +=" (";
+							whereClause +="	(`"+tableName+"`.`iduser` = "+userId+" OR `"+tableName+"`.`iduser` in("+subUserIds+") )";
+							whereClause +="	OR `"+groupRelationTable+"`.`idgroup` in("+groupIds+")";
+							whereClause +=" )";
+						} else {
+							whereClause =" AND ( `"+tableName+"`.`iduser` = "+userId+" OR `"+tableName+"`.`iduser` in("+subUserIds+") )";
+						}
+					} else {
+						if (includeGroups) {
+							whereClause = " AND (`"+tableName+"`.`iduser` = "+userId+" OR `"+groupRelationTable+"`.`idgroup` in("+groupIds+")";
+						} else {
+							whereClause = " AND `"+tableName+"`.`iduser` = "+userId;
+						}
+					}
+				}
+			} else {
+				return callback('Module does not have the datashare permission set');
+			}
+		}
+		return callback(null, whereClause);
+	} else {
 		return callback();
 	}
 };
