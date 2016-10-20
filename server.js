@@ -86,7 +86,26 @@ app.use(function(err, req, res, next) {
 	
 	// TODO better error handlers
 	if (err) {
-		res.json(err);
+		var errRes = {},
+			code = 500;
+		errRes.code = code;
+		if (_.isObject(err)) {
+			if (_.has(err,'status') && err.status) {
+				code = err.status;
+				errRes.code = code;
+			} 
+			
+			if (_.has(err,'title') && err.title) {
+				errRes.error = err.title;
+			}
+			
+			if (_.has(err,'details') && err.details) {
+				errRes.error_description = err.details;
+			}
+		} else {
+			errRes.error = err;
+		}
+		res.status(code).json(errRes);
 	}
 });
 

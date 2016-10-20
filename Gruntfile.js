@@ -36,6 +36,9 @@ module.exports = function(grunt) {
 		
 		// set the watch list and use jshint for the change
 		watch: {
+			options: {
+				livereload: true
+			},
 			scripts: {
 				files: [
 					'server.js',
@@ -45,10 +48,10 @@ module.exports = function(grunt) {
 					'models/**/*.js',
 					'utils/**/*.js'
 				],
-				tasks: ['jshint'],
+				tasks: ['jshint','express:dev'],
 				options: {
 					spawn: false
-				},
+				}
 			},
 		},
 		
