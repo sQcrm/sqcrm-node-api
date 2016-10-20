@@ -1,6 +1,3 @@
-var _ = require('lodash'),
-	async = require('async');
-
 /**
  * @swagger
  * resourcePath: /test
@@ -28,11 +25,23 @@ module.exports = function(app, config) {
 		*          required: true
 		*          dataType: string
 		*          defaultValue: Bearer ACCESS_TOKEN_HERE
+		*        - name: page
+		*          description: page number of results
+		*          paramType: query
+		*          required: false
+		*          dataType: integer
+		*          defaultValue: 1
+		*        - name: limit
+		*          description: the number of results per page
+		*          paramType: query
+		*          required: false
+		*          dataType: integer
+		*          defaultValue: 50
 		*/
 		getAll: function(req, res, next) {
 			var apiBase = req.protocol + '://' + req.get('host') + apiNamespace,
 				apiEndpoint = apiBase + '/' + resourceType + '/';
-			
+
 			var results = [{
 					id: '1',
 					firstName: 'Sandro',

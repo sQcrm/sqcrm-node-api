@@ -13,7 +13,6 @@ var _ = require('lodash'),
 // Instantiations and configs
 var app = express(),
 	config = require('./config/config'),
-	isProd = (config.env === 'production'),
 	Router = require('./routes'),
 	orm = new waterline();
 
@@ -83,6 +82,30 @@ app.use(function(err, req, res, next) {
 			error_description: err.error_description,
 		};
 		res.json(responseBody);	
+	}
+	
+	// TODO better error handlers
+	if (err) {
+		var errRes = {},
+			code = 500;
+		errRes.code = code;
+		if (_.isObject(err)) {
+			if (_.has(err,'status') && err.status) {
+				code = err.status;
+				errRes.code = code;
+			} 
+			
+			if (_.has(err,'title') && err.title) {
+				errRes.error = err.title;
+			}
+			
+			if (_.has(err,'details') && err.details) {
+				errRes.error_description = err.details;
+			}
+		} else {
+			errRes.error = err;
+		}
+		res.status(code).json(errRes);
 	}
 });
 

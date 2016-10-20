@@ -39,5 +39,12 @@
     "sails-mysql": "~0.11.5",
     "swagger-express": "~1.0.5",
     "waterline": "~0.12.2"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-express-server": "^0.5.3",
+    "grunt-open": "^0.2.3"
   }
 }
