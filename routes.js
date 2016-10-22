@@ -35,12 +35,19 @@ module.exports = function Router(app) {
 	function moduleAccess(moduleName) {
 		return moduleAccess[moduleName] || (moduleAccess[moduleName]= function(req, res, next) {
 			crmPrivileges.isModuleAccessAllowed(req, moduleName, function(err) {
-				if (err) {
-					return next({
-						status: 403,
-						title: err
-					});
-				}
+				if (err) return next(err);
+				return next();
+			});
+		});
+	}
+	
+	/**
+	 * middleware to check if the action is permitted on the module i.e. view, add, edit, delete
+	*/
+	function actionPermitted(moduleName, action) {
+		return actionPermitted[moduleName] || (actionPermitted[moduleName] = function(req, res, next) {
+			crmPrivileges.isActionPermitted(req, moduleName, action, function(err) {
+				if (err) return next(err);
 				return next();
 			});
 		});
@@ -53,7 +60,7 @@ module.exports = function Router(app) {
 	router.post('*', app.oauth.authorise());
 	
 	router.route('/test')
-	.get(moduleAccess('Contacts'),appControllers.test.getAll);
+	.get(moduleAccess('Contacts'),actionPermitted('Contacts','view'),appControllers.test.getAll);
 	
 	return router;
 };
