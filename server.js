@@ -65,6 +65,9 @@ app.use( function(req, res, next) {
 		
 		// do the serialize 
 		var data = new JSONAPISerializer(JSONAPIOptions.resourceType, JSONAPIOptions).serialize(responseBody);
+		if (res.locals.meta) {
+			data.meta = res.locals.meta;
+		}
 		// response data along with status 
 		res.status(status).json(data);
 	} else {

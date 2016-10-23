@@ -285,10 +285,9 @@ exports.isActionPermitted = function(req, moduleName, action, callback) {
 exports.userWhereCondition = function(req, moduleId, tableName, groupRelationTable, includeSubordinateUser, callback) {
 	var scope = req.oauth.bearerToken.scope,
 		privileges = req.oauth.bearerToken.privileges,
-		whereClause,
+		whereClause="",
 		userId;
 	if (scope === 'user') {
-		whereClause = "";
 		userId = req.oauth.bearerToken.user.id;
 		if (privileges.isAdmin !== 1) {
 			if (_.has(privileges.datasharePermissions,moduleId)) {
@@ -333,6 +332,6 @@ exports.userWhereCondition = function(req, moduleId, tableName, groupRelationTab
 		}
 		return callback(null, whereClause);
 	} else {
-		return callback();
+		return callback(null, whereClause);
 	}
 };
