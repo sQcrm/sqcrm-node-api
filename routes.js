@@ -62,5 +62,9 @@ module.exports = function Router(app) {
 	router.route('/test')
 	.get(moduleAccess('Contacts'),actionPermitted('Contacts','view'),appControllers.test.getAll);
 	
+	//Leads endpoint 
+	router.route('/leads')
+	.get(moduleAccess('Leads'),actionPermitted('Leads','view'),appControllers.leads.getAll);
+	
 	return router;
 };
