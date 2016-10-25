@@ -108,7 +108,7 @@ app.use(function(err, req, res, next) {
 		} else {
 			errRes.error = err;
 		}
-		return res.status(code).json(errRes);
+		res.status(code).json(errRes);
 	}
 });
 
