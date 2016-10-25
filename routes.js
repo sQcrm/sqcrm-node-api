@@ -66,5 +66,9 @@ module.exports = function Router(app) {
 	router.route('/leads')
 	.get(moduleAccess('Leads'),actionPermitted('Leads','view'),appControllers.leads.getAll);
 	
+	// Organizations end point
+	router.route('/organizations')
+	.get(moduleAccess('Organization'),actionPermitted('Organization','view'),appControllers.organizations.getAll);
+	
 	return router;
 };

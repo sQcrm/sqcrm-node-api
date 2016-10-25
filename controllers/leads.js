@@ -10,7 +10,7 @@ var _ = require('lodash'),
  */
 module.exports = function(app, config) {
 	var apiNamespace = config.apiNamespace,
-		resourceType = 'lead';
+		resourceType = 'leads';
 	
 	// Public Methods
 	return {
@@ -19,7 +19,7 @@ module.exports = function(app, config) {
 		* path: /api/v1/leads
 		* operations:
 		*   -  httpMethod: GET
-		*      summary: A test end point for sQcrm.
+		*      summary: Get all the leads
 		*      notes: Return some test data
 		*      responseClass: test
 		*      nickname: test
