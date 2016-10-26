@@ -302,12 +302,12 @@ exports.userWhereCondition = function(req, moduleId, tableName, groupRelationTab
 						groupIds,
 						subUserIds;
 					
-					if (groupRelationTable && _.has(privileges,'groups') && privileges.groups && privileges.groups.length > 0) {
+					if (groupRelationTable && _.has(privileges,'groups') && privileges.groups && _.size(privileges.groups) > 0) {
 						groupIds = privileges.groups.join();
 						includeGroups = true;
 					}
 					
-					if (includeSubordinateUser && _.has(privileges,'subordibateUsers') && privileges.subordibateUsers) {
+					if (includeSubordinateUser && _.has(privileges,'subordibateUsers') && privileges.subordibateUsers && _.size(privileges.subordibateUsers) > 0) {
 						subUserIds = privileges.subordibateUsers.join();
 						if (includeGroups) {
 							whereClause = " AND";
@@ -320,7 +320,7 @@ exports.userWhereCondition = function(req, moduleId, tableName, groupRelationTab
 						}
 					} else {
 						if (includeGroups) {
-							whereClause = " AND (`"+tableName+"`.`iduser` = "+userId+" OR `"+groupRelationTable+"`.`idgroup` in("+groupIds+")";
+							whereClause = " AND (`"+tableName+"`.`iduser` = "+userId+" OR `"+groupRelationTable+"`.`idgroup` in("+groupIds+"))";
 						} else {
 							whereClause = " AND `"+tableName+"`.`iduser` = "+userId;
 						}

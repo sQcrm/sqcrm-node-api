@@ -57,7 +57,7 @@ module.exports = function(app, config) {
 			
 			pagination.parsePagingRequest(req, function(err, pagingReq) {
 				if (err) return next(err);
-				page = pagingReq.page;
+				page = pagingReq.page -1; // limit 0,1 in case the page is 1
 				limit = pagingReq.limit;
 			});
 			
@@ -102,6 +102,7 @@ module.exports = function(app, config) {
 						query+= " left join `group` on `group`.`idgroup` = `leads_to_grp_rel`.`idgroup`";
 						query+= " where `leads`.`deleted` = 0";
 						query+= whereClause;
+						query+= " order by `leads`.`idleads`";
 						query+= " limit "+page+" , "+limit;
 					
 					app.models.leads
