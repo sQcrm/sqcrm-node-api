@@ -206,18 +206,70 @@ exports.isModuleAccessAllowed = function(req, moduleName, callback) {
 	if (moduleName in modulesConfig.moduleMapping) {
 		moduleId = modulesConfig.moduleMapping[moduleName];
 	}
-	if (!moduleId) return callback('Unauthorized access ! Module not found !');
-	if (_.indexOf(privileges.activeModules,moduleId) === -1) return callback('Unauthorized access ! Module not found !');
+	if (!moduleId) return callback({status:403,title:'Unauthorized access !',details:'Module not found for data access!'});
+	if (_.indexOf(privileges.activeModules,moduleId) === -1) return callback({status:403,title:'Unauthorized access !',details:'Module not found for data access!'});
 	if (scope === 'user') {
 		if (privileges.isAdmin === 1) return callback();
 		if (_.has(privileges.modulePemissions,moduleId) && privileges.modulePemissions[moduleId] === 1) {
 			return callback();
 		} else {
-			return callback('Unauthorized access ! Module is not allowed to be accessed !');
+			return callback({status:403,title:'Unauthorized access !',details:'Module is not allowed to be accessed !'});
 		}
 	} else {
 		// for now if the scope is not user allow module access
 		return callback();
+	}
+};
+
+exports.isActionPermitted = function(req, moduleName, action, callback) {
+	var scope = req.oauth.bearerToken.scope,
+		privileges = req.oauth.bearerToken.privileges,
+		moduleId;
+		
+	if (moduleName in modulesConfig.moduleMapping) {
+		moduleId = modulesConfig.moduleMapping[moduleName];
+	}
+	if (!moduleId) return callback({status:403,title:'Unauthorized access !',details:'Module not found for data access!'});
+	if (_.indexOf(privileges.activeModules,moduleId) === -1) return callback({status:403,title:'Unauthorized access !',details:'Module not found for data access!'});
+	if (scope === 'user') {
+		if (privileges.isAdmin === 1) return callback();
+		var accessAllowed,
+			stdPer;
+			
+		if (_.has(privileges,'moduleStandardPermissions')) {
+			if (_.has(privileges.moduleStandardPermissions,moduleId)) {		
+				stdPer = privileges.moduleStandardPermissions[moduleId];
+				switch(action) {
+					case "view":
+						if (stdPer["1"] === 1 || stdPer["2"] === 1 || stdPer["3"] === 1) {
+							accessAllowed = true ;
+						}
+						break;
+					
+					case "add":
+					case "edit":
+						if (stdPer["1"] === 1) {
+							accessAllowed = true ;
+						}
+						break;
+					
+					case "delete":
+						if (stdPer["3"] === 1) {
+							accessAllowed = true ;
+						}
+						break;
+				}
+				if (accessAllowed === true) {
+					return callback();
+				} else {
+					return callback({status:403,title:'Unauthorized access !',details:'Permission not available for '+action});
+				}
+			} else {
+				return callback({status:403,title:'Unauthorized access !',details:'No standard permission found for the module'});
+			}
+		} else {
+			return callback({status:403,title:'Unauthorized access !',details:'No standard permission found'});
+		}
 	}
 };
 
@@ -233,10 +285,9 @@ exports.isModuleAccessAllowed = function(req, moduleName, callback) {
 exports.userWhereCondition = function(req, moduleId, tableName, groupRelationTable, includeSubordinateUser, callback) {
 	var scope = req.oauth.bearerToken.scope,
 		privileges = req.oauth.bearerToken.privileges,
-		whereClause,
+		whereClause="",
 		userId;
 	if (scope === 'user') {
-		whereClause = "";
 		userId = req.oauth.bearerToken.user.id;
 		if (privileges.isAdmin !== 1) {
 			if (_.has(privileges.datasharePermissions,moduleId)) {
@@ -251,12 +302,12 @@ exports.userWhereCondition = function(req, moduleId, tableName, groupRelationTab
 						groupIds,
 						subUserIds;
 					
-					if (groupRelationTable && _.has(privileges,'groups') && privileges.groups && privileges.groups.length > 0) {
+					if (groupRelationTable && _.has(privileges,'groups') && privileges.groups && _.size(privileges.groups) > 0) {
 						groupIds = privileges.groups.join();
 						includeGroups = true;
 					}
 					
-					if (includeSubordinateUser && _.has(privileges,'subordibateUsers') && privileges.subordibateUsers) {
+					if (includeSubordinateUser && _.has(privileges,'subordibateUsers') && privileges.subordibateUsers && _.size(privileges.subordibateUsers) > 0) {
 						subUserIds = privileges.subordibateUsers.join();
 						if (includeGroups) {
 							whereClause = " AND";
@@ -269,7 +320,7 @@ exports.userWhereCondition = function(req, moduleId, tableName, groupRelationTab
 						}
 					} else {
 						if (includeGroups) {
-							whereClause = " AND (`"+tableName+"`.`iduser` = "+userId+" OR `"+groupRelationTable+"`.`idgroup` in("+groupIds+")";
+							whereClause = " AND (`"+tableName+"`.`iduser` = "+userId+" OR `"+groupRelationTable+"`.`idgroup` in("+groupIds+"))";
 						} else {
 							whereClause = " AND `"+tableName+"`.`iduser` = "+userId;
 						}
@@ -281,6 +332,6 @@ exports.userWhereCondition = function(req, moduleId, tableName, groupRelationTab
 		}
 		return callback(null, whereClause);
 	} else {
-		return callback();
+		return callback(null, whereClause);
 	}
 };
