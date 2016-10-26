@@ -125,7 +125,7 @@ module.exports = function(app, config) {
 				});
 				
 				var leadCount = (_.isArray(results.recordCount)) ? results.recordCount[0].tot : results.recordCount.tot;
-				var pagingLinks = pagination.pagingLinks(page, limit, leadCount, apiEndpoint);
+				var pagingLinks = pagination.pagingLinks(req, leadCount, apiEndpoint);
 				
 				res.locals.JSONAPIOptions = {
 					resourceType: resourceType,

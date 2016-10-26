@@ -130,7 +130,7 @@ module.exports = function(app, config) {
 				});
 				
 				var orgCount = (_.isArray(results.recordCount)) ? results.recordCount[0].tot : results.recordCount.tot;
-				var pagingLinks = pagination.pagingLinks(page, limit, orgCount, apiEndpoint);
+				var pagingLinks = pagination.pagingLinks(req, orgCount, apiEndpoint);
 				
 				res.locals.JSONAPIOptions = {
 					resourceType: resourceType,

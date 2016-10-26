@@ -16,8 +16,10 @@ exports.parsePagingRequest = function(req, callback) {
 	}
 };
 
-exports.pagingLinks = function(page, limit, recordCount, baseUrl) {
-	var lastPage,currPageLink,firstPageLink,lastPageLink,nextPageLink,prevPageLink,prevPage,nextPage;
+exports.pagingLinks = function(req, recordCount, baseUrl) {
+	var page = parseInt(req.query.page) || 1,
+		limit = parseInt(req.query.limit) || 50,
+		lastPage,currPageLink,firstPageLink,lastPageLink,nextPageLink,prevPageLink,prevPage,nextPage;
 	
 	baseUrl = baseUrl || '';
 	lastPage      = Math.ceil(recordCount/limit);
