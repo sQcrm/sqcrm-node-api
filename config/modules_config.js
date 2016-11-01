@@ -29,6 +29,14 @@ module.exports = {
 				'org_ship_city','org_bill_state','org_ship_state','org_bill_postalcode','org_ship_postalcode',
 				'org_bill_country','org_ship_country'
 			]
+		},
+		Potentials: {
+			default: [
+				'potential_name','potential_type','related_to','potentials_related_to_idmodule',
+				'potentials_related_to_value','related_module','expected_closing_date','leadsource',
+				'sales_stage','probability','assigned_to','description','amount','lost_reason',
+				'competitor_name','added_on','last_modified'
+			]
 		}
 	}
 }; 
