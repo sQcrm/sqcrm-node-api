@@ -133,14 +133,19 @@ module.exports = function(app, config) {
 			function(err, results) {
 				if (err) return next(err);
 				var prospects = _.map(results.getRecords, function(prospectsData) {
+					var relatedToInfo = {};
+					relatedToInfo.related_to_id = prospectsData.related_to;
+					relatedToInfo.related_to_value = prospectsData.potentials_related_to_value;
+					relatedToInfo.moduleId = prospectsData.potentials_related_to_idmodule;
 					// add the related module name in the response data 
 					if (prospectsData.potentials_related_to_idmodule === 4) {
-						prospectsData.related_module = 'Contacts';
+						relatedToInfo.module_name = 'Contacts';
 					} else if (prospectsData.potentials_related_to_idmodule === 6) {
-						prospectsData.related_module = 'Organization';
+						relatedToInfo.module_name = 'Organization';
 					} else {
-						prospectsData.related_module = null;
+						relatedToInfo.module_name = null;
 					}
+					prospectsData.related_to = relatedToInfo;
 					return prospectsData;
 				});
 				
