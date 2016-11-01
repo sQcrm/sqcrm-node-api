@@ -21,8 +21,8 @@ module.exports = function(app, config) {
 		*   -  httpMethod: GET
 		*      summary: Get all the leads
 		*      notes: Return all the leads associated with the token
-		*      responseClass: test
-		*      nickname: test
+		*      responseClass: leads
+		*      nickname: leads
 		*      parameters:
 		*        - name: Authorization
 		*          description: access token

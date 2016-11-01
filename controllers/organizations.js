@@ -21,8 +21,8 @@ module.exports = function(app, config) {
 		*   -  httpMethod: GET
 		*      summary: Get all the organizations
 		*      notes: Return all the organization associated with the token
-		*      responseClass: test
-		*      nickname: test
+		*      responseClass: organizations
+		*      nickname: organizations
 		*      parameters:
 		*        - name: Authorization
 		*          description: access token
