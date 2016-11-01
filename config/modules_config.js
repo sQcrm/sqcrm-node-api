@@ -32,10 +32,12 @@ module.exports = {
 		},
 		Potentials: {
 			default: [
-				'potential_name','potential_type','related_to','potentials_related_to_idmodule',
-				'potentials_related_to_value','related_module','expected_closing_date','leadsource',
+				'potential_name','potential_type','related_to','expected_closing_date','leadsource',
 				'sales_stage','probability','assigned_to','description','amount','lost_reason',
 				'competitor_name','added_on','last_modified'
+			],
+			relatedTo: [
+				'module_name','moduleId','related_to_id','related_to_value'
 			]
 		}
 	}
