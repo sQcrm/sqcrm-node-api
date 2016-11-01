@@ -20,7 +20,7 @@ module.exports = function(app, config) {
 		* operations:
 		*   -  httpMethod: GET
 		*      summary: Get all the prospects
-		*      notes: Return some test data
+		*      notes: Return all the prospects associated with the token
 		*      responseClass: test
 		*      nickname: test
 		*      parameters:
