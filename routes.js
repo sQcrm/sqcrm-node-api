@@ -70,5 +70,9 @@ module.exports = function Router(app) {
 	router.route('/organizations')
 	.get(moduleAccess('Organization'),actionPermitted('Organization','view'),appControllers.organizations.getAll);
 	
+	// Prospects end point
+	router.route('/prospects')
+	.get(moduleAccess('Potentials'),actionPermitted('Potentials','view'),appControllers.prospects.getAll);
+	
 	return router;
 };
