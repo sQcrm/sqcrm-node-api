@@ -21,8 +21,8 @@ module.exports = function(app, config) {
 		*   -  httpMethod: GET
 		*      summary: Get all the prospects
 		*      notes: Return all the prospects associated with the token
-		*      responseClass: test
-		*      nickname: test
+		*      responseClass: prospects
+		*      nickname: prospects
 		*      parameters:
 		*        - name: Authorization
 		*          description: access token
