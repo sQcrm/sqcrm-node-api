@@ -74,5 +74,9 @@ module.exports = function Router(app) {
 	router.route('/prospects')
 	.get(moduleAccess('Potentials'),actionPermitted('Potentials','view'),appControllers.prospects.getAll);
 	
+	// CalendarEvents end point
+	router.route('/calendarevents')
+	.get(moduleAccess('Calendar'),actionPermitted('Calendar','view'),appControllers.events.getAll);
+	
 	return router;
 };
