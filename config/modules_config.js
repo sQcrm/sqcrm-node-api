@@ -39,6 +39,19 @@ module.exports = {
 			relatedTo: [
 				'module_name','moduleId','related_to_id','related_to_value'
 			]
+		},
+		CalendarEvents: {
+			default: [
+				'event_type','subject','description','location','priority','start_date','start_time',
+				'end_date','end_time','event_status','assigned_to','added_on','last_modified','related_to',
+				'events_reminder'
+			],
+			relatedTo: [
+				'module_name','moduleId','related_to_id','related_to_value'
+			],
+			eventsReminder: [
+				'days','hours','minutes','email_ids','reminder_send'
+			]
 		}
 	}
 }; 
