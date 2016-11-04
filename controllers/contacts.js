@@ -88,9 +88,9 @@ module.exports = function(app, config) {
 					if (contactCount === 0) return autoCallback();
 
 					var query = " select `contacts`.`idcontacts` as `id`,`contacts`.*,";
-						query+= " `contacts_address`.*,";
-						query+= " `contacts_custom_fld`.*,";
-						query+= " `cnt_to_grp_rel`.`idgroup`,";
+                                                query+= " `contacts_address`.*,";
+                                                query+= " `contacts_custom_fld`.*,";
+                                                query+= " `cnt_to_grp_rel`.`idgroup`,";
                                                 query+= " `organization`.`organization_name` as `contact_orgranization`,";
                                                 query+= " concat(`cnt2`.firstname,' ',`cnt2`.lastname) as `contact_report_to`,";
                                                 query+= " case when (`user`.`user_name` not like '')";
