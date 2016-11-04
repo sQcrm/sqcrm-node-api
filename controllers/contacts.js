@@ -67,12 +67,12 @@ module.exports = function(app, config) {
 				recordCount: function(autoCallback) {
 					var query = " select count(*) as tot from `contacts`";
 						query+= " inner join `contacts_address` on `contacts_address`.`idcontacts` = `contacts`.`idcontacts`";
-                                                query+= " inner join `contacts_custom_fld` on `contacts_custom_fld`.`idcontacts` = `contacts`.`idcontacts`";
-                                                query+= " left join `user` on `user`.`iduser` = `contacts`.`iduser`";
-                                                query+= " left join `cnt_to_grp_rel` on `cnt_to_grp_rel`.`idcontacts` = `contacts`.`idcontacts`";
-                                                query+= " left join `group` on `group`.`idgroup` = `cnt_to_grp_rel`.`idgroup`";
-                                                query+= " where `contacts`.`deleted` = 0";
-                                                query+= whereClause;
+						query+= " inner join `contacts_custom_fld` on `contacts_custom_fld`.`idcontacts` = `contacts`.`idcontacts`";
+						query+= " left join `user` on `user`.`iduser` = `contacts`.`iduser`";
+						query+= " left join `cnt_to_grp_rel` on `cnt_to_grp_rel`.`idcontacts` = `contacts`.`idcontacts`";
+						query+= " left join `group` on `group`.`idgroup` = `cnt_to_grp_rel`.`idgroup`";
+						query+= " where `contacts`.`deleted` = 0";
+						query+= whereClause;
 					
 					app.models.contacts
 					.query(query, function(err, contactCount) {
@@ -88,29 +88,29 @@ module.exports = function(app, config) {
 					if (contactCount === 0) return autoCallback();
 
 					var query = " select `contacts`.`idcontacts` as `id`,`contacts`.*,";
-                                                query+= " `contacts_address`.*,";
-                                                query+= " `contacts_custom_fld`.*,";
-                                                query+= " `cnt_to_grp_rel`.`idgroup`,";
-                                                query+= " `organization`.`organization_name` as `contact_orgranization`,";
-                                                query+= " concat(`cnt2`.firstname,' ',`cnt2`.lastname) as `contact_report_to`,";
-                                                query+= " case when (`user`.`user_name` not like '')";
-                                                query+= " then";
-                                                query+= " `user`.`user_name`";
-                                                query+= " else";
-                                                query+= " `group`.`group_name` end";
-                                                query+= " as `assigned_to`";
-                                                query+= " from `contacts`";
-                                                query+= " inner join `contacts_address` on `contacts_address`.`idcontacts` = `contacts`.`idcontacts`";
-                                                query+= " inner join `contacts_custom_fld` on `contacts_custom_fld`.`idcontacts` = `contacts`.`idcontacts`";
-                                                query+= " left join `user` on `user`.`iduser` = `contacts`.`iduser`";
-                                                query+= " left join `cnt_to_grp_rel` on `cnt_to_grp_rel`.`idcontacts` = `contacts`.`idcontacts`";
-                                                query+= " left join `group` on `group`.`idgroup` = `cnt_to_grp_rel`.`idgroup`";
-                                                query+= " left join `organization` on `organization`.`idorganization` = `contacts`.`idorganization`";
-                                                query+= " left join contacts as `cnt2` on `contacts`.`reports_to` = `cnt2`.`idcontacts` AND `contacts`.`reports_to` <> 0";
-                                                query+= " where `contacts`.`deleted` = 0";
-                                                query+= whereClause;
-                                                query+= " order by `contacts`.`idcontacts`";
-                                                query+= " limit "+page+" , "+limit;
+						query+= " `contacts_address`.*,";
+						query+= " `contacts_custom_fld`.*,";
+						query+= " `cnt_to_grp_rel`.`idgroup`,";
+						query+= " `organization`.`organization_name` as `contact_orgranization`,";
+						query+= " concat(`cnt2`.firstname,' ',`cnt2`.lastname) as `contact_report_to`,";
+						query+= " case when (`user`.`user_name` not like '')";
+						query+= " then";
+						query+= " `user`.`user_name`";
+						query+= " else";
+						query+= " `group`.`group_name` end";
+						query+= " as `assigned_to`";
+						query+= " from `contacts`";
+						query+= " inner join `contacts_address` on `contacts_address`.`idcontacts` = `contacts`.`idcontacts`";
+						query+= " inner join `contacts_custom_fld` on `contacts_custom_fld`.`idcontacts` = `contacts`.`idcontacts`";
+						query+= " left join `user` on `user`.`iduser` = `contacts`.`iduser`";
+						query+= " left join `cnt_to_grp_rel` on `cnt_to_grp_rel`.`idcontacts` = `contacts`.`idcontacts`";
+						query+= " left join `group` on `group`.`idgroup` = `cnt_to_grp_rel`.`idgroup`";
+						query+= " left join `organization` on `organization`.`idorganization` = `contacts`.`idorganization`";
+						query+= " left join contacts as `cnt2` on `contacts`.`reports_to` = `cnt2`.`idcontacts` AND `contacts`.`reports_to` <> 0";
+						query+= " where `contacts`.`deleted` = 0";
+						query+= whereClause;
+						query+= " order by `contacts`.`idcontacts`";
+						query+= " limit "+page+" , "+limit;
 				
 					app.models.contacts
 					.query(query, function(err, cont) {
