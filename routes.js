@@ -77,6 +77,10 @@ module.exports = function Router(app) {
 	// CalendarEvents end point
 	router.route('/calendarevents')
 	.get(moduleAccess('Calendar'),actionPermitted('Calendar','view'),appControllers.events.getAll);
+        
+        //Contacts end point 
+	router.route('/contacts')
+	.get(moduleAccess('Contacts'),actionPermitted('Contacts','view'),appControllers.contacts.getAll);
 	
 	return router;
 };

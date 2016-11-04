@@ -222,11 +222,6 @@ var contacts = Waterline.Collection.extend({
                     columnName: 'cnt_mailing_state'
                 },
                 
-                otherStreet: {
-                        type: 'string',
-                        columnName: 'cnt_other_state'
-                },
-                
                 postalCode: {
                      type : 'string',
                      columnName: 'cnt_mailing_postalcode'
