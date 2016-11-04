@@ -71,7 +71,6 @@ module.exports = function(app, config) {
                                                 query+= " left join `user` on `user`.`iduser` = `contacts`.`iduser`";
                                                 query+= " left join `cnt_to_grp_rel` on `cnt_to_grp_rel`.`idcontacts` = `contacts`.`idcontacts`";
                                                 query+= " left join `group` on `group`.`idgroup` = `cnt_to_grp_rel`.`idgroup`";
-                                                query+=" left join contacts as `cnt2` on `contacts`.`reports_to` = `cnt2`.`idcontacts` AND `contacts`.`reports_to` <> 0";
                                                 query+= " where `contacts`.`deleted` = 0";
                                                 query+= whereClause;
 					
@@ -92,7 +91,7 @@ module.exports = function(app, config) {
 						query+= " `contacts_address`.*,";
 						query+= " `contacts_custom_fld`.*,";
 						query+= " `cnt_to_grp_rel`.`idgroup`,";
-						query+= " `organization`.`organization_name` as `contact_orgranization`,";
+                                                query+= " `organization`.`organization_name` as `contact_orgranization`,";
                                                 query+= " concat(`cnt2`.firstname,' ',`cnt2`.lastname) as `contact_report_to`,";
                                                 query+= " case when (`user`.`user_name` not like '')";
                                                 query+= " then";
