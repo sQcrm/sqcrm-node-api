@@ -54,6 +54,21 @@ module.exports = {
 				'days','hours','minutes','email_ids','reminder_send'
 			]
 		},
+                Contacts: {
+                        default: [
+                                'firstname','lastname','office_phone','mobile_num','leadsource','home_phone',
+                                'title','other_phone','department','email','fax','date_of_birth','assistant','assistant_phone',
+                                'reports_to','secondary_email','email_opt_out','do_not_call','description','contact_avatar',
+                                'portal_user','support_start_date','support_end_date','last_modified','added_on',
+                                'contact_orgranization','idorganization','address'
+                        ],
+                        address: [
+                                'cnt_mail_street','cnt_other_street','cnt_mail_pobox','cnt_other_pobox','cnt_mailing_city',
+                                'cnt_other_city','cnt_mailing_state','cnt_other_state','cnt_mailing_postalcode',
+                                'cnt_other_postalcode','cnt_mailing_country','cnt_other_country'
+                        ]
+                        
+                }
 		Vendor: {
 			default: [
 				'vendor_name','email','phone','website','description','assigned_to','added_on',
