@@ -82,5 +82,9 @@ module.exports = function Router(app) {
 	router.route('/contacts')
 	.get(moduleAccess('Contacts'),actionPermitted('Contacts','view'),appControllers.contacts.getAll);
 	
+	// Vendors end point
+	router.route('/vendors')
+	.get(moduleAccess('Vendor'),actionPermitted('Vendor','view'),appControllers.vendors.getAll);
+	
 	return router;
 };

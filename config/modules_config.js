@@ -6,7 +6,8 @@ module.exports = {
 		Contacts:4,
 		Potentials:5,
 		Organization:6,
-		Notes:8
+		Notes:8,
+		Vendor:11
 	},
 	moduleAttributes: {
 		Leads: {
@@ -68,5 +69,15 @@ module.exports = {
                         ]
                         
                 }
+		Vendor: {
+			default: [
+				'vendor_name','email','phone','website','description','assigned_to','added_on',
+				'last_modified','address'
+			],
+			address: [
+				'vendor_street','vendor_city','vendor_postal_code','vendor_po_box','vendor_state',
+				'vendor_country'
+			]
+		}
 	}
 }; 
