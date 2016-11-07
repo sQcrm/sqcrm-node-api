@@ -78,6 +78,14 @@ module.exports = {
 				'vendor_street','vendor_city','vendor_postal_code','vendor_po_box','vendor_state',
 				'vendor_country'
 			]
+		},
+		Products: {
+			default: [
+					'product_name','is_active','product_category','manufacturer','idvendor','vendor_name',
+					'website','description','assigned_to','added_on','last_modified','price_information',
+					'quantity','tax_value'
+				],
+			
 		}
 	}
 }; 
