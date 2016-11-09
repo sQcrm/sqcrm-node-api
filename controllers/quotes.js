@@ -136,12 +136,14 @@ module.exports = function(app, config) {
 			},
 			function(err, results) {
 				if (err) return next(err);
-				var quotes = {};
+				var quotes = {},
+					quotePrefix = results.getQuotePrifix;
 				
 				async.forEachOf(results.getRecords, function(quote, key, eachCallBack) {
 					var addressInfo = {};
 					
 					async.auto({
+						// set the quote address
 						setAddress: function(modifiedCallBack) {
 							modulesConfig.moduleAttributes.Quotes.address.forEach( function(attr) {
 								addressInfo[attr]= quote[attr];
@@ -149,17 +151,23 @@ module.exports = function(app, config) {
 							quote.address = addressInfo;
 							return modifiedCallBack();
 						},
-				
-						setQuoteTaxValues: function(modifiedCallBack) {
+						// set the tax and invoice number
+						setTaxAndInvNumValues: function(modifiedCallBack) {
 							_.map(quote, function(v, k) {
+								// making sure that the tax_values and shipping_handling_tax_values are parsed into proper format
 								if (k === 'tax_values' || k === 'shipping_handling_tax_values') {
 									v = common.parseTaxData(v);
+									quote[k] = v;
+								}
+								// prefixing the quote number with the quote prefix from setting
+								if (quotePrefix && quotePrefix.settingData && k === 'quote_number') {
+									v= quotePrefix.settingData+''+v;
 									quote[k] = v;
 								}
 							});
 							return modifiedCallBack();
 						},
-						
+						// set the line items which is one-to-many relation with quote
 						setLineItems: function(modifiedCallBack) {
 							app.models.lineitems 
 							.find({recordid:quote.id})
@@ -168,6 +176,7 @@ module.exports = function(app, config) {
 								if (lineitem) {
 									lineitem = _.map(lineitem, function(value,key) {
 										_.map(value, function(v,k) {
+											// making sure that the taxValues are parsed in to proper format
 											if (k === 'taxValues') {
 												v = common.parseTaxData(v);
 												value[k] = v;
