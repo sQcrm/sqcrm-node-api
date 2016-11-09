@@ -7,7 +7,8 @@ module.exports = {
 		Potentials:5,
 		Organization:6,
 		Notes:8,
-		Vendor:11
+		Vendor:11,
+		Products: 12
 	},
 	moduleAttributes: {
 		Leads: {
@@ -83,9 +84,14 @@ module.exports = {
 			default: [
 					'product_name','is_active','product_category','manufacturer','idvendor','vendor_name',
 					'website','description','assigned_to','added_on','last_modified','price_information',
-					'quantity','tax_value'
+					'tax_value','quantity','price_information'
 				],
-			
+			quantity: [
+					'unit_quantity','quantity_in_stock','quantity_in_demand'
+				],
+			price_information: [
+					'product_price','commission_rate'
+				]
 		}
 	}
 }; 
