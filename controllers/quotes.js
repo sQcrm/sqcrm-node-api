@@ -191,7 +191,7 @@ module.exports = function(app, config) {
 							});
 						}
 					},
-					function(err)	{
+					function(err) {
 						if (err) return eachCallBack(err);
 						
 						return eachCallBack();
