@@ -8,11 +8,8 @@ module.exports = {
 		Organization:6,
 		Notes:8,
 		Vendor:11,
-<<<<<<< HEAD
 		Products: 12
-=======
 		Quotes: 13
->>>>>>> develop
 	},
 	moduleAttributes: {
 		Leads: {
