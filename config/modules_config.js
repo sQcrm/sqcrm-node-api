@@ -93,7 +93,7 @@ module.exports = {
 			price_information: [
 					'product_price','commission_rate'
 				]
-		}
+		},
 		Quotes: {
 			default: [
 				'quote_number','subject','quote_stage','idorganization','organization_name',
