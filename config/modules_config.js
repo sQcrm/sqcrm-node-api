@@ -109,4 +109,5 @@ module.exports = {
 				'q_billing_state','q_shipping_state','q_billing_country','q_shipping_country'
 			]
 		}
+	}
 }; 
