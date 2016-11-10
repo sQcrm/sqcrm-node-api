@@ -8,6 +8,7 @@ module.exports = {
 		Organization:6,
 		Notes:8,
 		Vendor:11,
+		Products: 12,
 		Quotes: 13
 	},
 	moduleAttributes: {
@@ -79,6 +80,19 @@ module.exports = {
 				'vendor_street','vendor_city','vendor_postal_code','vendor_po_box','vendor_state',
 				'vendor_country'
 			]
+		},
+		Products: {
+			default: [
+					'product_name','is_active','product_category','manufacturer','idvendor','vendor_name',
+					'website','description','assigned_to','added_on','last_modified','price_information',
+					'tax_value','quantity','price_information'
+				],
+			quantity: [
+					'unit_quantity','quantity_in_stock','quantity_in_demand'
+				],
+			price_information: [
+					'product_price','commission_rate'
+				]
 		},
 		Quotes: {
 			default: [

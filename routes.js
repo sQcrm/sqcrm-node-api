@@ -78,7 +78,7 @@ module.exports = function Router(app) {
 	router.route('/calendarevents')
 	.get(moduleAccess('Calendar'),actionPermitted('Calendar','view'),appControllers.events.getAll);
         
-        //Contacts end point 
+	//Contacts end point 
 	router.route('/contacts')
 	.get(moduleAccess('Contacts'),actionPermitted('Contacts','view'),appControllers.contacts.getAll);
 	
@@ -86,6 +86,10 @@ module.exports = function Router(app) {
 	router.route('/vendors')
 	.get(moduleAccess('Vendor'),actionPermitted('Vendor','view'),appControllers.vendors.getAll);
 	
+	//Contacts end point 
+	router.route('/Products')
+	.get(moduleAccess('Products'),actionPermitted('Products','view'),appControllers.products.getAll);
+
 	// Quotes end point
 	router.route('/quotes')
 	.get(moduleAccess('Quotes'),actionPermitted('Quotes','view'),appControllers.quotes.getAll);
