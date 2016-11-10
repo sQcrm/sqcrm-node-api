@@ -8,7 +8,7 @@ module.exports = {
 		Organization:6,
 		Notes:8,
 		Vendor:11,
-		Products: 12
+		Products: 12,
 		Quotes: 13
 	},
 	moduleAttributes: {
