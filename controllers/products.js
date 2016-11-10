@@ -112,6 +112,7 @@ module.exports = function(app, config) {
 						query+= " left join `products_tax` on `products_tax`.`idproducts` = `products`.`idproducts`";
 						query+= " where `products`.`deleted` = 0";
 						query+= whereClause;
+						query+= " group by `products`.`idproducts`";
 						query+= " order by `products`.`idproducts`";
 						query+= " limit "+page+" , "+limit;
 				
