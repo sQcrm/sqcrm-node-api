@@ -109,7 +109,7 @@ module.exports = function(app, config) {
 						query+= " left join contacts as `cnt2` on `contacts`.`reports_to` = `cnt2`.`idcontacts` AND `contacts`.`reports_to` <> 0";
 						query+= " where `contacts`.`deleted` = 0";
 						query+= whereClause;
-						query+= " order by `contacts`.`idcontacts`";
+						query+= " group by `products`.`idproducts` order by `contacts`.`idcontacts`";
 						query+= " limit "+page+" , "+limit;
 				
 					app.models.contacts
