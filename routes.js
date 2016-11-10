@@ -89,6 +89,10 @@ module.exports = function Router(app) {
 	//Contacts end point 
 	router.route('/Products')
 	.get(moduleAccess('Products'),actionPermitted('Products','view'),appControllers.products.getAll);
+
+	// Quotes end point
+	router.route('/quotes')
+	.get(moduleAccess('Quotes'),actionPermitted('Quotes','view'),appControllers.quotes.getAll);
 	
 	return router;
 };

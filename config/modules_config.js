@@ -8,7 +8,11 @@ module.exports = {
 		Organization:6,
 		Notes:8,
 		Vendor:11,
+<<<<<<< HEAD
 		Products: 12
+=======
+		Quotes: 13
+>>>>>>> develop
 	},
 	moduleAttributes: {
 		Leads: {
@@ -93,5 +97,19 @@ module.exports = {
 					'product_price','commission_rate'
 				]
 		}
-	}
+		Quotes: {
+			default: [
+				'quote_number','subject','quote_stage','idorganization','organization_name',
+				'idpotentials','potential_name','valid_till','assigned_to','description',
+				'added_on','last_modified','net_total','discount_type','discount_value',
+				'discounted_amount','tax_values','taxed_amount','shipping_handling_charge',
+				'shipping_handling_tax_values','shipping_handling_taxed_amount','final_adjustment_type',
+				'final_adjustment_amount','grand_total','terms_condition','address','line_items'
+			],
+			address: [
+				'q_billing_address','q_shipping_address','q_billing_po_box','q_shipping_po_box',
+				'q_billing_po_code','q_shipping_po_code','q_billing_city','q_shipping_city',
+				'q_billing_state','q_shipping_state','q_billing_country','q_shipping_country'
+			]
+		}
 }; 
