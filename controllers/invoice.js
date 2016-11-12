@@ -163,7 +163,7 @@ module.exports = function(app, config) {
 									v = common.parseTaxData(v);
 									invoice[k] = v;
 								}
-								// prefixing the SO number with the SO prefix from setting
+								// prefixing the invoice number with the invoice prefix from setting
 								if (invoicePrefix && invoicePrefix.settingData && k === 'invoice_number') {
 									v= invoicePrefix.settingData+''+v;
 									invoice[k] = v;
@@ -171,7 +171,7 @@ module.exports = function(app, config) {
 							});
 							return modifiedCallBack();
 						},
-						// set the line items which is one-to-many relation with quote
+						// set the line items which is one-to-many relation with invoice
 						setLineItems: function(modifiedCallBack) {
 							app.models.lineitems 
 							.find({recordid:invoice.id,moduleId:15})
@@ -211,7 +211,7 @@ module.exports = function(app, config) {
 					res.locals.JSONAPIOptions = {
 						resourceType: resourceType,
 						topLevelLinks: pagingLinks,
-						attributes:modulesConfig.moduleAttributes.Quotes.default,
+						attributes:modulesConfig.moduleAttributes.Invoice.default,
 						dataLinks: {
 							self: function (invoices,inv) {
 								return apiEndpoint + inv.id;
