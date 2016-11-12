@@ -10,7 +10,8 @@ module.exports = {
 		Vendor:11,
 		Products: 12,
 		Quotes: 13,
-		SalesOrder:14
+		SalesOrder:14,
+		Invoice:15
 	},
 	moduleAttributes: {
 		Leads: {
@@ -123,6 +124,21 @@ module.exports = {
 				'so_billing_address','so_shipping_address','so_billing_po_box','so_shipping_po_box',
 				'so_billing_po_code','so_shipping_po_code','so_billing_city','so_shipping_city',
 				'so_billing_state','so_shipping_state','so_billing_country','so_shipping_country'
+			]
+		},
+		Invoice: {
+			default: [
+				'invoice_number','subject','invoice_status','idorganization','organization_name',
+				'idpotentials','potential_name','idcontacts','contact_name','idsales_order',
+				'salesorder_subject','due_date','assigned_to','description','added_on','last_modified',
+				'net_total','discount_type','discount_value','discounted_amount','tax_values','taxed_amount',
+				'shipping_handling_charge','shipping_handling_tax_values','shipping_handling_taxed_amount',
+				'final_adjustment_type','final_adjustment_amount','grand_total','address','line_items'
+			],
+			address: [
+				'inv_billing_address','inv_shipping_address','inv_billing_po_box','inv_shipping_po_box',
+				'inv_billing_po_code','inv_shipping_po_code','inv_billing_city','inv_shipping_city',
+				'inv_billing_state','inv_shipping_state','inv_billing_country','inv_shipping_country'
 			]
 		}
 	}
