@@ -94,5 +94,9 @@ module.exports = function Router(app) {
 	router.route('/quotes')
 	.get(moduleAccess('Quotes'),actionPermitted('Quotes','view'),appControllers.quotes.getAll);
 	
+	// SalesOrder end point
+	router.route('/salesorders')
+	.get(moduleAccess('SalesOrder'),actionPermitted('SalesOrder','view'),appControllers.salesorder.getAll);
+	
 	return router;
 };

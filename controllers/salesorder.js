@@ -6,24 +6,24 @@ var _ = require('lodash'),
 	common = require('../utils/common');
 /**
  * @swagger
- * resourcePath: /quotes
- * description: sQcrm Quotes 
+ * resourcePath: /salesorders
+ * description: sQcrm SalesOrder 
  */
 module.exports = function(app, config) {
 	var apiNamespace = config.apiNamespace,
-		resourceType = 'quotes';
+		resourceType = 'salesorders';
 	
 	// Public Methods
 	return {
 		/**
 		* @swagger
-		* path: /api/v1/quotes
+		* path: /api/v1/salesorders
 		* operations:
 		*   -  httpMethod: GET
-		*      summary: Get all the quotes
-		*      notes: Return all the quotes associated with the token
-		*      responseClass: quotes
-		*      nickname: quotes
+		*      summary: Get all the salesorders
+		*      notes: Return all the salesorders associated with the token
+		*      responseClass: salesorders
+		*      nickname: salesorders
 		*      parameters:
 		*        - name: Authorization
 		*          description: access token
@@ -51,7 +51,7 @@ module.exports = function(app, config) {
 				page,
 				limit;
 
-			crmPrivileges.userWhereCondition(req, 13, 'quotes', 'quotes_to_grp_rel', true, function(err, whereCond) {
+			crmPrivileges.userWhereCondition(req, 14, 'sales_order', 'sales_order_to_grp_rel', true, function(err, whereCond) {
 				if (err) return next(err);
 				whereClause = whereCond;
 			});
@@ -66,29 +66,29 @@ module.exports = function(app, config) {
 			async.auto({
 				// get the record count
 				recordCount: function(autoCallback) {
-					var query = " select count(*) as tot from `quotes`";
-						query+= " inner join `quotes_address` on `quotes_address`.`idquotes` = `quotes`.`idquotes`";
-						query+= " inner join `quotes_custom_fld` on `quotes_custom_fld`.`idquotes` = `quotes`.`idquotes`";
-						query+= " left join `user` on `user`.`iduser` = `quotes`.`iduser`";
-						query+= " left join `quotes_to_grp_rel` on `quotes_to_grp_rel`.`idquotes` = `quotes`.`idquotes`";
-						query+= " left join `group` on `group`.`idgroup` = `quotes_to_grp_rel`.`idgroup`";
-						query+= " where `quotes`.`deleted` = 0";
+					var query = " select count(*) as tot from `sales_order`";
+						query+= " inner join `sales_order_address` on `sales_order_address`.`idsales_order` = `sales_order`.`idsales_order`";
+						query+= " inner join `sales_order_custom_fld` on `sales_order_custom_fld`.`idsales_order` = `sales_order`.`idsales_order`";
+						query+= " left join `user` on `user`.`iduser` = `sales_order`.`iduser`";
+						query+= " left join `sales_order_to_grp_rel` on `sales_order_to_grp_rel`.`idsales_order` = `sales_order`.`idsales_order`";
+						query+= " left join `group` on `group`.`idgroup` = `sales_order_to_grp_rel`.`idgroup`";
+						query+= " where `sales_order`.`deleted` = 0";
 						query+= whereClause;
 					
-					app.models.quotes
-					.query(query, function(err, quotesCount) {
+					app.models.salesorder
+					.query(query, function(err, soCount) {
 						if (err) return autoCallback(err);
 						
-						return autoCallback(null, quotesCount);
+						return autoCallback(null, soCount);
 					});
 				},
 				// get the quote prifix
-				getQuotePrifix: ['recordCount', function(result, autoCallback) {
-					var quotesCount = (_.isArray(result.recordCount)) ? result.recordCount[0].tot : result.recordCount.tot;
-					if (quotesCount === 0) return autoCallback();
+				getSOPrifix: ['recordCount', function(result, autoCallback) {
+					var soCount = (_.isArray(result.recordCount)) ? result.recordCount[0].tot : result.recordCount.tot;
+					if (soCount === 0) return autoCallback();
 					
 					app.models.global_settings
-					.findOne({settingName:'quote_num_prefix'})
+					.findOne({settingName:'salesorder_num_prefix'})
 					.exec(function(err,globalSetting) {
 						if (err) return autoCallback(err);
 						  
@@ -101,68 +101,72 @@ module.exports = function(app, config) {
 					var quotesCount = (_.isArray(result.recordCount)) ? result.recordCount[0].tot : result.recordCount.tot;
 					if (quotesCount === 0) return autoCallback();
 
-					var query = " select `quotes`.`idquotes` as `id`,`quotes`.*,";
-						query+= " `quotes_custom_fld`.*,";
-						query+= " `quotes_address`.*,";
-						query+= " `organization`.`organization_name` as `organization_name`,";
+					var query = " select `sales_order`.`idsales_order` as `id`,`sales_order`.*,";
+						query+= " `sales_order_custom_fld`.*,";
+						query+= " `sales_order_address`.*,";
+						query+= " `organization`.`organization_name`,";
+						query+= " concat(`contacts`.`firstname`,' ',`contacts`.`lastname`) as `contact_name`,";
 						query+= " `potentials`.`potential_name`,";
-						query+= " `quotes_to_grp_rel`.`idgroup`,";
+						query+= " `quotes`.`subject` as `quote_subject`,";
+						query+= " `sales_order_to_grp_rel`.`idgroup`,";
 						query+= " case when (`user`.`user_name` not like '')";
 						query+= " then";
 						query+= " `user`.`user_name`";
 						query+= " else";
 						query+= " `group`.`group_name` end";
 						query+= " as `assigned_to`";
-						query+= " from `quotes`";
-						query+= " inner join `quotes_address` on `quotes_address`.`idquotes` = `quotes`.`idquotes`";
-						query+= " inner join `quotes_custom_fld` on `quotes_custom_fld`.`idquotes` = `quotes`.`idquotes`";
-						query+= " left join `user` on `user`.`iduser` = `quotes`.`iduser`";
-						query+= " left join `quotes_to_grp_rel` on `quotes_to_grp_rel`.`idquotes` = `quotes`.`idquotes`";
-						query+= " left join `organization` on `organization`.`idorganization` = `quotes`.`idorganization`";
-						query+= " left join `group` on `group`.`idgroup` = `quotes_to_grp_rel`.`idgroup`";
-						query+= " left join `potentials` on `potentials`.`idpotentials` = `quotes`.`idpotentials`";
-						query+= " where `quotes`.`deleted` = 0";
+						query+= " from `sales_order`";
+						query+= " inner join `sales_order_address` on `sales_order_address`.`idsales_order` = `sales_order`.`idsales_order`";
+						query+= " inner join `sales_order_custom_fld` on `sales_order_custom_fld`.`idsales_order` = `sales_order`.`idsales_order`";
+						query+= " left join `user` on `user`.`iduser` = `sales_order`.`iduser`";
+						query+= " left join `sales_order_to_grp_rel` on `sales_order_to_grp_rel`.`idsales_order` = `sales_order`.`idsales_order`";
+						query+= " left join `organization` on `organization`.`idorganization` = `sales_order`.`idorganization`";
+						query+= " left join `group` on `group`.`idgroup` = `sales_order_to_grp_rel`.`idgroup`";
+						query+= " left join `potentials` on `potentials`.`idpotentials` = `sales_order`.`idpotentials`";
+						query+= " left join `quotes` on `quotes`.`idquotes` = `sales_order`.`idquotes`";
+						query+= " left join `contacts` on `contacts`.`idcontacts` = `sales_order`.`idcontacts`";
+						query+= " where `sales_order`.`deleted` = 0";
 						query+= whereClause;
-						query+= " order by `quotes`.`idquotes`";
+						query+= " order by `sales_order`.`idsales_order`";
 						query+= " limit "+page+" , "+limit;
-					
-					app.models.quotes
-					.query(query, function(err, quotes) {
+					console.log(query);
+					app.models.salesorder
+					.query(query, function(err, salesorder) {
 						if (err) return autoCallback(err);
 						   
-						return autoCallback(null, quotes);
+						return autoCallback(null, salesorder);
 					});
 				}]
 			},
 			function(err, results) {
 				if (err) return next(err);
-				var quotes = {},
-					quotePrefix = results.getQuotePrifix;
+				var salesOrders = {},
+					soPrefix = results.getSOPrifix;
 				
-				async.forEachOf(results.getRecords, function(quote, key, eachCallBack) {
+				async.forEachOf(results.getRecords, function(salesOrder, key, eachCallBack) {
 					var addressInfo = {};
 					
 					async.auto({
-						// set the quote address
+						// set the address
 						setAddress: function(modifiedCallBack) {
-							modulesConfig.moduleAttributes.Quotes.address.forEach( function(attr) {
-								addressInfo[attr]= quote[attr];
+							modulesConfig.moduleAttributes.SalesOrder.address.forEach( function(attr) {
+								addressInfo[attr]= salesOrder[attr];
 							});
-							quote.address = addressInfo;
+							salesOrder.address = addressInfo;
 							return modifiedCallBack();
 						},
 						// set the tax and invoice number
 						setTaxAndInvNumValues: function(modifiedCallBack) {
-							_.map(quote, function(v, k) {
+							_.map(salesOrder, function(v, k) {
 								// making sure that the tax_values and shipping_handling_tax_values are parsed into proper format
 								if (k === 'tax_values' || k === 'shipping_handling_tax_values') {
 									v = common.parseTaxData(v);
-									quote[k] = v;
+									salesOrder[k] = v;
 								}
-								// prefixing the quote number with the quote prefix from setting
-								if (quotePrefix && quotePrefix.settingData && k === 'quote_number') {
-									v= quotePrefix.settingData+''+v;
-									quote[k] = v;
+								// prefixing the SO number with the SO prefix from setting
+								if (soPrefix && soPrefix.settingData && k === 'sales_order_number') {
+									v= soPrefix.settingData+''+v;
+									salesOrder[k] = v;
 								}
 							});
 							return modifiedCallBack();
@@ -170,7 +174,7 @@ module.exports = function(app, config) {
 						// set the line items which is one-to-many relation with quote
 						setLineItems: function(modifiedCallBack) {
 							app.models.lineitems 
-							.find({recordid:quote.id,,moduleId:13})
+							.find({recordid:salesOrder.id,moduleId:14})
 							.exec(function(err,lineitem) {
 								if (err) return modifiedCallBack(err);
 								if (lineitem) {
@@ -185,8 +189,8 @@ module.exports = function(app, config) {
 										return value;
 									});
 								}
-								quote.line_items = lineitem;
-								quotes[key] = quote;
+								salesOrder.line_items = lineitem;
+								salesOrders[key] = salesOrder;
 								return modifiedCallBack();
 							});
 						}
@@ -198,24 +202,24 @@ module.exports = function(app, config) {
 					});
 				}, function(err) {
 					if (err) return next(err);
-					quotes = _.map(quotes, function(quotesData) {
-						return quotesData;
+					salesOrders = _.map(salesOrders, function(soData) {
+						return soData;
 					});
-					var quotesCount = (_.isArray(results.recordCount)) ? results.recordCount[0].tot : results.recordCount.tot;
-					var pagingLinks = pagination.pagingLinks(req, quotesCount, apiEndpoint);
+					var soCount = (_.isArray(results.recordCount)) ? results.recordCount[0].tot : results.recordCount.tot;
+					var pagingLinks = pagination.pagingLinks(req, soCount, apiEndpoint);
 					
 					res.locals.JSONAPIOptions = {
 						resourceType: resourceType,
 						topLevelLinks: pagingLinks,
 						attributes:modulesConfig.moduleAttributes.Quotes.default,
 						dataLinks: {
-							self: function (quotes,quote) {
-								return apiEndpoint + quote.id;
+							self: function (salesOrders,so) {
+								return apiEndpoint + so.id;
 							}
 						}
 					};
-					res.locals.meta = {totalRecords: quotesCount};
-					res.body = quotes;
+					res.locals.meta = {totalRecords: soCount};
+					res.body = salesOrders;
 					return next(); 
 				});
 			});

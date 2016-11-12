@@ -22,6 +22,12 @@ var lineitems = Waterline.Collection.extend({
 			required: true,
 			columnName: 'recordid'
 		},
+		
+		moduleId: {
+			type: 'integer',
+			required: true,
+			columnName: 'idmodule'
+		},
 
 		itemType: {
 			type: 'string',

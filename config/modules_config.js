@@ -9,7 +9,8 @@ module.exports = {
 		Notes:8,
 		Vendor:11,
 		Products: 12,
-		Quotes: 13
+		Quotes: 13,
+		SalesOrder:14
 	},
 	moduleAttributes: {
 		Leads: {
@@ -107,6 +108,21 @@ module.exports = {
 				'q_billing_address','q_shipping_address','q_billing_po_box','q_shipping_po_box',
 				'q_billing_po_code','q_shipping_po_code','q_billing_city','q_shipping_city',
 				'q_billing_state','q_shipping_state','q_billing_country','q_shipping_country'
+			]
+		},
+		SalesOrder: {
+			default: [
+				'sales_order_number','subject','sales_order_status','idorganization','organization_name',
+				'idpotentials','potential_name','idcontacts','contact_name','idquotes','quote_subject',
+				'due_date','assigned_to','description','added_on','last_modified','net_total','discount_type',
+				'discount_value','discounted_amount','tax_values','taxed_amount','shipping_handling_charge',
+				'shipping_handling_tax_values','shipping_handling_taxed_amount','final_adjustment_type',
+				'final_adjustment_amount','grand_total','address','line_items'
+			],
+			address: [
+				'so_billing_address','so_shipping_address','so_billing_po_box','so_shipping_po_box',
+				'so_billing_po_code','so_shipping_po_code','so_billing_city','so_shipping_city',
+				'so_billing_state','so_shipping_state','so_billing_country','so_shipping_country'
 			]
 		}
 	}
