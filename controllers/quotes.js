@@ -151,8 +151,8 @@ module.exports = function(app, config) {
 							quote.address = addressInfo;
 							return modifiedCallBack();
 						},
-						// set the tax and invoice number
-						setTaxAndInvNumValues: function(modifiedCallBack) {
+						// set the tax and quote number
+						setTaxAndQuoteNumValues: function(modifiedCallBack) {
 							_.map(quote, function(v, k) {
 								// making sure that the tax_values and shipping_handling_tax_values are parsed into proper format
 								if (k === 'tax_values' || k === 'shipping_handling_tax_values') {

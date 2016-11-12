@@ -82,7 +82,7 @@ module.exports = function(app, config) {
 						return autoCallback(null, soCount);
 					});
 				},
-				// get the quote prifix
+				// get the sales order prifix
 				getSOPrifix: ['recordCount', function(result, autoCallback) {
 					var soCount = (_.isArray(result.recordCount)) ? result.recordCount[0].tot : result.recordCount.tot;
 					if (soCount === 0) return autoCallback();
@@ -155,8 +155,8 @@ module.exports = function(app, config) {
 							salesOrder.address = addressInfo;
 							return modifiedCallBack();
 						},
-						// set the tax and invoice number
-						setTaxAndInvNumValues: function(modifiedCallBack) {
+						// set the tax and so number
+						setTaxAndSONumValues: function(modifiedCallBack) {
 							_.map(salesOrder, function(v, k) {
 								// making sure that the tax_values and shipping_handling_tax_values are parsed into proper format
 								if (k === 'tax_values' || k === 'shipping_handling_tax_values') {
@@ -171,7 +171,7 @@ module.exports = function(app, config) {
 							});
 							return modifiedCallBack();
 						},
-						// set the line items which is one-to-many relation with quote
+						// set the line items which is one-to-many relation with sales order
 						setLineItems: function(modifiedCallBack) {
 							app.models.lineitems 
 							.find({recordid:salesOrder.id,moduleId:14})
