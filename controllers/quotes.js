@@ -170,7 +170,7 @@ module.exports = function(app, config) {
 						// set the line items which is one-to-many relation with quote
 						setLineItems: function(modifiedCallBack) {
 							app.models.lineitems 
-							.find({recordid:quote.id,,moduleId:13})
+							.find({recordid:quote.id,moduleId:13})
 							.exec(function(err,lineitem) {
 								if (err) return modifiedCallBack(err);
 								if (lineitem) {
