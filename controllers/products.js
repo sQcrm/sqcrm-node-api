@@ -156,7 +156,7 @@ module.exports = function(app, config) {
 						setTaxAndProductNumValues: function(modifiedCallBack) {
 							_.map(productData, function(v, k) {
 									// making sure that the tax_values and shipping_handling_tax_values are parsed into proper format
-								if (k === 'tax_values' || k === 'shipping_handling_tax_values') {
+								if (k === 'tax_value' || k === 'shipping_handling_tax_values') {
 									v = common.parseTaxData(v);
 									productData[k] = v;
 								}
