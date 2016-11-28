@@ -2,7 +2,8 @@ var _ = require('lodash'),
 	crmPrivileges = require('../utils/crm_privileges'),
 	modulesConfig = require('../config/modules_config'),
 	async = require('async'),
-	pagination = require('../utils/pagination');
+	pagination = require('../utils/pagination'),
+	common = require('../utils/common');
 /**
  * @swagger
  * resourcePath: /products
@@ -117,32 +118,92 @@ module.exports = function(app, config) {
 						query+= " limit "+page+" , "+limit;
 				
 					app.models.products
-					.query(query, function(err, cont) {
+					.query(query, function(err, products) {
 						if (err) return autoCallback(err);
-						return autoCallback(null, cont);
+						return autoCallback(null, products);
 					});
 				}]
 			},
 			function(err, results) {
 				if (err) return next(err);
-				var products = _.map(results.getRecords, function(productData) {
-					// add the quantity info in the response data 
-					var quantityInfo = {};
-					modulesConfig.moduleAttributes.Products.quantity.forEach( function(attr) {
-						quantityInfo[attr]= productData[attr];
-					}); 
-					productData.quantity = quantityInfo;
-					
-					//add price_information info in to response data
+				var productFData = {},
+				productPrefix = results.getProductPrifix;
+				var quantityInfo = {};
 					var priceInformationInfo = {};
-					modulesConfig.moduleAttributes.Products.price_information.forEach( function(attr) {
-						priceInformationInfo[attr] = productData[attr];
-					});
-					productData.price_information = priceInformationInfo;
+				async.forEachOf(results.getRecords, function(productData, key, eachCallBack) {
+					// add the quantity info in the response data 
 					
-					return productData;
-				});
-				
+					async.auto({
+					
+						setQuantity: function(modifiedCallBack) {
+							modulesConfig.moduleAttributes.Products.quantity.forEach( function(attr) {
+								quantityInfo[attr]= productData[attr];
+							}); 
+							productData.quantity = quantityInfo;
+							return modifiedCallBack();
+						},
+					
+						//add price_information info in to response data
+						setPriceInfo: function(modifiedCallBack){
+							modulesConfig.moduleAttributes.Products.price_information.forEach( function(attr) {
+								priceInformationInfo[attr] = productData[attr];
+							});
+							productData.price_information = priceInformationInfo;
+							return modifiedCallBack();
+						},
+						
+						// set the tax and product number
+						setTaxAndProductNumValues: function(modifiedCallBack) {
+							_.map(productData, function(v, k) {
+									// making sure that the tax_values and shipping_handling_tax_values are parsed into proper format
+								if (k === 'tax_values' || k === 'shipping_handling_tax_values') {
+									v = common.parseTaxData(v);
+									productData[k] = v;
+								}
+								// prefixing the SO number with the SO prefix from setting
+								if (productPrefix && productPrefix.settingData && k === 'product_number') {
+									v= productPrefix.settingData+''+v;
+									productData[k] = v;
+								}
+							});
+							return modifiedCallBack();
+						},
+						
+						// set the line items which is one-to-many relation with invoice
+						setLineItems: function(modifiedCallBack) {
+							app.models.lineitems 
+							.find({recordid:productData.id,moduleId:15})
+							.exec(function(err,lineitem) {
+								if (err) return modifiedCallBack(err);
+								if (lineitem) {
+									lineitem = _.map(lineitem, function(value,key) {
+										_.map(value, function(v,k) {
+											// making sure that the taxValues are parsed in to proper format
+											if (k === 'taxValues') {
+												v = common.parseTaxData(v);
+												value[k] = v;
+											}
+										});
+										return value;
+									});
+								}
+								productData.line_items = lineitem;
+								productFData[key] = productData;
+								return modifiedCallBack();
+							});
+						}
+					
+					},
+					function(err) {
+						if (err) return eachCallBack(err);
+						
+						return eachCallBack();
+					});
+				}, function(err) {
+					if (err) return next(err);
+					productFData = _.map(productFData, function(poData) {
+						return poData;
+					});
 				var productsCount= (_.isArray(results.recordCount)) ? results.recordCount[0].tot : results.recordCount.tot;
 				var pagingLinks = pagination.pagingLinks(req, productsCount, apiEndpoint);
 				
@@ -151,15 +212,16 @@ module.exports = function(app, config) {
 					topLevelLinks: pagingLinks,
 					attributes:modulesConfig.moduleAttributes.Products.default,
 					dataLinks: {
-						self: function (products,cont) {
+						self: function (productFData,cont) {
 							return apiEndpoint + cont.id;
 						}
 					}
 				};
 				res.locals.meta = {totalRecords: productsCount};
-				res.body = products;
+				res.body = productFData;
 				return next(); 
+			 });
 			});
-		}	
+		}
 	};
 };
