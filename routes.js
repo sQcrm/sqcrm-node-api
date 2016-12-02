@@ -102,5 +102,9 @@ module.exports = function Router(app) {
 	router.route('/invoices')
 	.get(moduleAccess('Invoice'),actionPermitted('Invoice','view'),appControllers.invoice.getAll);
 	
+	//PurchaseOrder end point
+	router.route('/PurchaseOrders')
+	.get(moduleAccess('PurchaseOrder'),actionPermitted('PurchaseOrder','view'),appControllers.purchaseorder.getAll);
+	
 	return router;
 };

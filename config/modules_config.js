@@ -140,6 +140,21 @@ module.exports = {
 				'inv_billing_po_code','inv_shipping_po_code','inv_billing_city','inv_shipping_city',
 				'inv_billing_state','inv_shipping_state','inv_billing_country','inv_shipping_country'
 			]
+		},
+		PurchaseOrder: {
+			default: [
+					'po_subject','description','terms_condition','po_status','due_date','po_number',
+					'po_key','net_total','discount_type','discount_value','discounted_amount','tax_values',
+					'taxed_amount','shipping_handling_charge','shipping_handling_tax_values','shipping_handling_taxed_amount',
+					'final_adjustment_type','final_adjustment_amount','grand_total','added_on','last_modified','last_modified_by',
+					'address'
+				],
+				address: [
+					'po_billing_address','po_billing_po_box','po_billing_po_code','po_billing_city','po_billing_state',
+					'po_billing_country','po_shipping_address','po_shipping_po_box','po_shipping_po_code','po_shipping_city',
+					'po_shipping_state','po_shipping_country'
+				]
+			
 		}
 	}
 }; 
