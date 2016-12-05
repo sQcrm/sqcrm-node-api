@@ -126,8 +126,8 @@ module.exports = function(app, config) {
 			},
 			function(err, results) {
 				if (err) return next(err);
-				var productFData = {},
-				productPrefix = results.getProductPrifix;
+				var productFData = {};
+				//productPrefix = results.getProductPrifix;
 				var quantityInfo = {};
 					var priceInformationInfo = {};
 				async.forEachOf(results.getRecords, function(productData, key, eachCallBack) {
@@ -153,44 +153,20 @@ module.exports = function(app, config) {
 						},
 						
 						// set the tax and product number
-						setTaxAndProductNumValues: function(modifiedCallBack) {
+						setProductTaxValues: function(modifiedCallBack) {
 							_.map(productData, function(v, k) {
 									// making sure that the tax_values and shipping_handling_tax_values are parsed into proper format
-								if (k === 'tax_value' || k === 'shipping_handling_tax_values') {
+								if (k === 'tax_value') {
 									v = common.parseTaxData(v);
 									productData[k] = v;
 								}
-								// prefixing the SO number with the SO prefix from setting
-								if (productPrefix && productPrefix.settingData && k === 'product_number') {
-									v= productPrefix.settingData+''+v;
-									productData[k] = v;
-								}
+// 								// prefixing the SO number with the SO prefix from setting
+// 								if (productPrefix && productPrefix.settingData && k === 'product_number') {
+// 									v= productPrefix.settingData+''+v;
+// 									productData[k] = v;
+// 								}
 							});
 							return modifiedCallBack();
-						},
-						
-						// set the line items which is one-to-many relation with invoice
-						setLineItems: function(modifiedCallBack) {
-							app.models.lineitems 
-							.find({recordid:productData.id,moduleId:15})
-							.exec(function(err,lineitem) {
-								if (err) return modifiedCallBack(err);
-								if (lineitem) {
-									lineitem = _.map(lineitem, function(value,key) {
-										_.map(value, function(v,k) {
-											// making sure that the taxValues are parsed in to proper format
-											if (k === 'taxValues') {
-												v = common.parseTaxData(v);
-												value[k] = v;
-											}
-										});
-										return value;
-									});
-								}
-								productData.line_items = lineitem;
-								productFData[key] = productData;
-								return modifiedCallBack();
-							});
 						}
 					
 					},
