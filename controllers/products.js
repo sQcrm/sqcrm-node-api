@@ -166,6 +166,7 @@ module.exports = function(app, config) {
 // 									productData[k] = v;
 // 								}
 							});
+							productFData[key] = productData;
 							return modifiedCallBack();
 						}
 					
