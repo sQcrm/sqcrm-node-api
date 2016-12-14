@@ -127,7 +127,6 @@ module.exports = function(app, config) {
 			function(err, results) {
 				if (err) return next(err);
 				var productFData = {};
-				//productPrefix = results.getProductPrifix;
 				var quantityInfo = {};
 					var priceInformationInfo = {};
 				async.forEachOf(results.getRecords, function(productData, key, eachCallBack) {
@@ -160,11 +159,6 @@ module.exports = function(app, config) {
 									v = common.parseTaxData(v);
 									productData[k] = v;
 								}
-// 								// prefixing the SO number with the SO prefix from setting
-// 								if (productPrefix && productPrefix.settingData && k === 'product_number') {
-// 									v= productPrefix.settingData+''+v;
-// 									productData[k] = v;
-// 								}
 							});
 							productFData[key] = productData;
 							return modifiedCallBack();
