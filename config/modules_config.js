@@ -11,7 +11,8 @@ module.exports = {
 		Products: 12,
 		Quotes: 13,
 		SalesOrder:14,
-		Invoice:15
+		Invoice:15,
+		PurchaseOrder: 16
 	},
 	moduleAttributes: {
 		Leads: {

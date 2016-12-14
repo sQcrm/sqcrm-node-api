@@ -6,8 +6,8 @@ var _ = require('lodash'),
 	common = require('../utils/common');
 /**
  * @swagger
- * resourcePath: /quotes
- * description: sQcrm Quotes 
+ * resourcePath: /purchaseorders
+ * description: sQcrm Purchaseorders 
  */
 module.exports = function(app, config) {
 	var apiNamespace = config.apiNamespace,
@@ -51,7 +51,7 @@ module.exports = function(app, config) {
 				page,
 				limit;
 
-			crmPrivileges.userWhereCondition(req, 16, 'PurchaseOrder', 'purchase_order_custom_fld', true, function(err, whereCond) {
+			crmPrivileges.userWhereCondition(req, 16, 'purchase_order', 'purchase_order_custom_fld', true, function(err, whereCond) {
 				if (err) return next(err);
 				whereClause = whereCond;
 			});
@@ -160,8 +160,8 @@ module.exports = function(app, config) {
 									purchaseorder[k] = v;
 								}
 								// prefixing the quote number with the quote prefix from setting
-								if (purchaseorderPrefix && purchaseorderPrefix.settingData && k === 'po_number') {
-									v= purchaseorderPrefix.settingData+''+v;
+								if (purchseorderPrefix && purchseorderPrefix.settingData && k === 'po_number') {
+									v= purchseorderPrefix.settingData+''+v;
 									purchaseorder[k] = v;
 								}
 							});
@@ -170,7 +170,7 @@ module.exports = function(app, config) {
 						// set the line items which is one-to-many relation with quote
 						setLineItems: function(modifiedCallBack) {
 							app.models.lineitems 
-							.find({recordid:purchase_order.id,moduleId:16})
+							.find({recordid:purchaseorder.id,moduleId:16})
 							.exec(function(err,lineitem) {
 								if (err) return modifiedCallBack(err);
 								if (lineitem) {
@@ -210,7 +210,7 @@ module.exports = function(app, config) {
 						attributes:modulesConfig.moduleAttributes.PurchaseOrder.default,
 						dataLinks: {
 							self: function (purchaseorders,purchaseorder) {
-								return apiEndpoint + purchase_order.id;
+								return apiEndpoint + purchaseorder.id;
 							}
 						}
 					};

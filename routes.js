@@ -103,7 +103,7 @@ module.exports = function Router(app) {
 	.get(moduleAccess('Invoice'),actionPermitted('Invoice','view'),appControllers.invoice.getAll);
 	
 	//PurchaseOrder end point
-	router.route('/PurchaseOrders')
+	router.route('/purchaseorders')
 	.get(moduleAccess('PurchaseOrder'),actionPermitted('PurchaseOrder','view'),appControllers.purchaseorder.getAll);
 	
 	return router;
