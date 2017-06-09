@@ -20,9 +20,9 @@ module.exports = function(app, config) {
 		* operations:
 		*   -  httpMethod: GET
 		*      summary: Get all the organizations
-		*      notes: Return some test data
-		*      responseClass: test
-		*      nickname: test
+		*      notes: Return all the organization associated with the token
+		*      responseClass: organizations
+		*      nickname: organizations
 		*      parameters:
 		*        - name: Authorization
 		*          description: access token

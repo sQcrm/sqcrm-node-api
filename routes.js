@@ -70,5 +70,41 @@ module.exports = function Router(app) {
 	router.route('/organizations')
 	.get(moduleAccess('Organization'),actionPermitted('Organization','view'),appControllers.organizations.getAll);
 	
+	// Prospects end point
+	router.route('/prospects')
+	.get(moduleAccess('Potentials'),actionPermitted('Potentials','view'),appControllers.prospects.getAll);
+	
+	// CalendarEvents end point
+	router.route('/calendarevents')
+	.get(moduleAccess('Calendar'),actionPermitted('Calendar','view'),appControllers.events.getAll);
+        
+	//Contacts end point 
+	router.route('/contacts')
+	.get(moduleAccess('Contacts'),actionPermitted('Contacts','view'),appControllers.contacts.getAll);
+	
+	// Vendors end point
+	router.route('/vendors')
+	.get(moduleAccess('Vendor'),actionPermitted('Vendor','view'),appControllers.vendors.getAll);
+	
+	//Contacts end point 
+	router.route('/Products')
+	.get(moduleAccess('Products'),actionPermitted('Products','view'),appControllers.products.getAll);
+
+	// Quotes end point
+	router.route('/quotes')
+	.get(moduleAccess('Quotes'),actionPermitted('Quotes','view'),appControllers.quotes.getAll);
+	
+	// SalesOrder end point
+	router.route('/salesorders')
+	.get(moduleAccess('SalesOrder'),actionPermitted('SalesOrder','view'),appControllers.salesorder.getAll);
+	
+	// Invoice end point
+	router.route('/invoices')
+	.get(moduleAccess('Invoice'),actionPermitted('Invoice','view'),appControllers.invoice.getAll);
+	
+	//PurchaseOrder end point
+	router.route('/purchaseorders')
+	.get(moduleAccess('PurchaseOrder'),actionPermitted('PurchaseOrder','view'),appControllers.purchaseorder.getAll);
+	
 	return router;
 };
