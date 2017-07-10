@@ -20,5 +20,6 @@ exports.parseTaxData = function(taxData) {
 		};
 		returnData.push(obj);
 	});
+	
 	return returnData;
 };

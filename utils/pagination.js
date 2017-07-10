@@ -9,6 +9,7 @@ exports.parsePagingRequest = function(req, callback) {
 		});
 	} else {
 		var data = {
+			start: (page -1) * limit,
 			page : page,
 			limit: limit
 		};
