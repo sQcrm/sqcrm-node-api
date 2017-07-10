@@ -48,7 +48,7 @@ module.exports = function(app, config) {
 			var apiBase = req.protocol + '://' + req.get('host') + apiNamespace,
 				apiEndpoint = apiBase + '/' + resourceType + '/',
 				whereClause,
-				page,
+				startIndex,
 				limit;
 
 			crmPrivileges.userWhereCondition(req, 14, 'sales_order', 'sales_order_to_grp_rel', true, function(err, whereCond) {
@@ -58,8 +58,9 @@ module.exports = function(app, config) {
 			
 			pagination.parsePagingRequest(req, function(err, pagingReq) {
 				if (err) return next(err);
-				page = pagingReq.page -1; // limit 0,1 in case the page is 1
+				
 				limit = pagingReq.limit;
+				startIndex = pagingReq.start;
 			});
 			
 			
@@ -128,7 +129,7 @@ module.exports = function(app, config) {
 						query+= " where `sales_order`.`deleted` = 0";
 						query+= whereClause;
 						query+= " order by `sales_order`.`idsales_order`";
-						query+= " limit "+page+" , "+limit;
+						query+= " limit "+startIndex+" , "+limit;
 					console.log(query);
 					app.models.salesorder
 					.query(query, function(err, salesorder) {
